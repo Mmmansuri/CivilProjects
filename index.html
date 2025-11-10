@@ -730,8 +730,8 @@
             // Supports (point location, type: 'fixed', 'pinned', 'roller')
             supports: [
         { id: 'SUP1', location: [0.000, 0.000, 0.250], type: 'pinned' },
-        { id: 'SUP2', location: [0.000, 5.000, 0.250], type: 'pinned' },
-        { id: 'SUP3', location: [6.000, 0.000, 0.250], type: 'pinned' },
+        { id: 'SUP2', location: [0.000, 5.000, 0.250], type: 'fixed' },
+        { id: 'SUP3', location: [6.000, 0.000, 0.250], type: 'roller' },
         { id: 'SUP4', location: [6.000, 5.000, 0.250], type: 'pinned' },
     ]
         };
@@ -1281,14 +1281,16 @@
                     shininess: 30
                 });
                 const cone = new THREE.Mesh(geometry, material);
-                cone.rotation.x = Math.PI;
-                cone.position.y = -0.3;
-                group.add(cone);
+                // cone.rotation.x = Math.PI;
+                //cone.position.y = -0.3;
+                //group.add(cone);
 
                 // Add base plate
-                const plateGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 8);
+                const plateHeight = 0.1;
+                const plateGeom = new THREE.CylinderGeometry(0.4, 0.4, plateHeight, 16);
                 const plate = new THREE.Mesh(plateGeom, material);
-                plate.position.y = -0.65;
+                // Put the plate so its TOP sits at y = 0 (before the group’s X-rotation)
+                plate.position.y = -plateHeight / 2;   // was -0.65 with the cone present
                 group.add(plate);
 
             } else if (supportData.type === 'pinned') {
@@ -1345,7 +1347,7 @@
                 roller2.rotation.z = Math.PI / 2;
                 group.add(roller2);
             }
-
+            group.rotateX(Math.PI / 2);
             group.position.copy(position);
             structure.add(group);
         }
