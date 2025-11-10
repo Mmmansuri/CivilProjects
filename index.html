@@ -20,6 +20,10 @@
             overflow-x: hidden;
         }
 
+        body.fullscreen-mode {
+            overflow: hidden;
+        }
+
         /* Animated starry background */
         .stars-container {
             position: fixed;
@@ -56,6 +60,10 @@
             position: sticky;
             top: 0;
             z-index: 100;
+        }
+
+        body.fullscreen-mode nav {
+            display: none;
         }
         
         .nav-container {
@@ -116,6 +124,12 @@
             z-index: 1;
         }
 
+        body.fullscreen-mode .page-wrapper {
+            padding: 0;
+            max-width: 100%;
+            margin: 0;
+        }
+
         /* Canvas Container - Full Width */
         .canvas-wrapper {
             background: rgba(255, 255, 255, 0.95);
@@ -127,12 +141,24 @@
             margin-bottom: 30px;
             position: relative;
         }
+
+        body.fullscreen-mode .canvas-wrapper {
+            border-radius: 0;
+            border: none;
+            margin-bottom: 0;
+            box-shadow: none;
+        }
         
         #container {
             width: 100%;
             height: 900px;
             position: relative;
             background: #f8fafc;
+        }
+
+        body.fullscreen-mode #container {
+            height: 100vh;
+            width: 100vw;
         }
 
         #container.dark-canvas {
@@ -151,12 +177,22 @@
             top: 20px;
             right: 20px;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #3b82f6;
             border-radius: 12px;
-            padding: 12px 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #container.dark-canvas .canvas-bg-toggle {
+            background: rgba(30, 30, 30, 0.95);
+            border-color: #60a5fa;
+        }
+
+        .toggle-row {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -166,6 +202,7 @@
             color: #1e293b;
             font-weight: 600;
             font-size: 13px;
+            min-width: 85px;
         }
 
         #container.dark-canvas .canvas-bg-label {
@@ -174,170 +211,26 @@
 
         /* Layers Panel - Inside Canvas */
         .layers-panel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            width: 280px;
-            max-height: 800px;
-            overflow-y: auto;
+            display: none;
         }
 
-        #container.dark-canvas .layers-panel {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .layers-panel h3 {
-            color: #1e3a8a;
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #3b82f6;
-            padding-bottom: 8px;
+        /* Scrollbar for layers panel */
+        .layers-panel::-webkit-scrollbar {
+            width: 6px;
         }
 
-        #container.dark-canvas .layers-panel h3 {
-            color: #93c5fd;
-        }
-        
-        .layer-item {
-            margin-bottom: 5px;
+        .layers-panel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
-        .layer-header {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(229, 231, 235, 0.3);
-            cursor: pointer;
-            user-select: none;
+        .layers-panel::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 10px;
         }
 
-        .expand-btn {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .expand-btn:hover {
-            background: #2563eb;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(203, 213, 225, 0.5);
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #3b82f6;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        .layer-label {
-            font-size: 14px;
-            color: #374151;
-            font-weight: 500;
-        }
-
-        #container.dark-canvas .layer-label {
-            color: #e5e7eb;
-        }
-
-        .sub-layers {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            padding-left: 28px;
-        }
-
-        .sub-layers.expanded {
-            max-height: 500px;
-        }
-
-        .sub-layer-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            padding-left: 10px;
-            border-left: 2px solid rgba(229, 231, 235, 0.3);
-        }
-
-        .sub-layer-item .toggle-switch {
-            width: 40px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .sub-layer-item .slider:before {
-            height: 14px;
-            width: 14px;
-        }
-
-        .sub-layer-item input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        .sub-layer-item .layer-label {
-            font-size: 13px;
-            color: #64748b;
-            font-weight: 400;
-        }
-
-        #container.dark-canvas .sub-layer-item .layer-label {
-            color: #cbd5e1;
+        .layers-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.7);
         }
 
         /* View Controls Overlay - Right Bottom with Glassmorphism */
@@ -345,9 +238,9 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #1e293b;
             padding: 15px;
             border-radius: 12px;
@@ -358,8 +251,8 @@
         }
 
         #container.dark-canvas #controls {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         #controls h4 {
@@ -394,25 +287,6 @@
             color: #cbd5e1;
         }
 
-        /* Scrollbar for layers panel */
-        .layers-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .layers-panel::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .layers-panel::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 10px;
-        }
-
-        .layers-panel::-webkit-scrollbar-thumb:hover {
-            background: rgba(59, 130, 246, 0.7);
-        }
-
         /* About Section */
         .about-section {
             background: rgba(255, 255, 255, 0.95);
@@ -421,6 +295,10 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             margin-bottom: 30px;
             backdrop-filter: blur(10px);
+        }
+
+        body.fullscreen-mode .about-section {
+            display: none;
         }
         
         .about-section h3 {
@@ -474,6 +352,10 @@
             margin-top: 50px;
             box-shadow: 0 -2px 20px rgba(0,0,0,0.3);
         }
+
+        body.fullscreen-mode footer {
+            display: none;
+        }
         
         .footer-content {
             max-width: 1800px;
@@ -518,6 +400,52 @@
             font-size: 14px;
         }
 
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(203, 213, 225, 0.5);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             #container {
@@ -526,10 +454,6 @@
 
             .project-stats {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .layers-panel {
-                width: 250px;
             }
         }
         
@@ -571,11 +495,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .layers-panel {
-                width: 220px;
-                max-height: 500px;
-            }
-
             .canvas-bg-toggle {
                 top: 15px;
                 right: 15px;
@@ -610,16 +529,6 @@
             .control-label {
                 min-width: 60px;
             }
-
-            .layers-panel {
-                width: 200px;
-                padding: 15px;
-                max-height: 400px;
-            }
-
-            .layers-panel h3 {
-                font-size: 16px;
-            }
         }
     </style>
 </head>
@@ -653,204 +562,19 @@
             <div id="container">
                 <!-- Canvas Background Toggle -->
                 <div class="canvas-bg-toggle">
-                    <span class="canvas-bg-label">Canvas BG</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="canvasBgToggle" onchange="toggleCanvasBackground()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <!-- Layers Panel Inside Canvas -->
-                <div class="layers-panel">
-                    <h3>Layers</h3>
-                    
-                    <!-- Civil Layer -->
-                    <div class="layer-item">
-                        <div class="layer-header" onclick="toggleSubLayers(this)">
-                            <button class="expand-btn">+</button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <span class="layer-label">Civil</span>
-                        </div>
-                        <div class="sub-layers">
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Slabs</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Walls</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Foundations</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Earthwork</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Drainage</span>
-                            </div>
-                        </div>
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Canvas BG</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="canvasBgToggle" onchange="toggleCanvasBackground()">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-
-                    <!-- Piping Layer -->
-                    <div class="layer-item">
-                        <div class="layer-header" onclick="toggleSubLayers(this)">
-                            <button class="expand-btn">+</button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <span class="layer-label">Piping</span>
-                        </div>
-                        <div class="sub-layers">
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Water Supply</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Waste Water</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Gas Lines</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Electrical Layer -->
-                    <div class="layer-item">
-                        <div class="layer-header" onclick="toggleSubLayers(this)">
-                            <button class="expand-btn">+</button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <span class="layer-label">Electrical</span>
-                        </div>
-                        <div class="sub-layers">
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Power Distribution</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Lighting</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Emergency Systems</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- HVAC Layer -->
-                    <div class="layer-item">
-                        <div class="layer-header" onclick="toggleSubLayers(this)">
-                            <button class="expand-btn">+</button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <span class="layer-label">HVAC</span>
-                        </div>
-                        <div class="sub-layers">
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Air Conditioning</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Ventilation</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Heating</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Structural Layer -->
-                    <div class="layer-item">
-                        <div class="layer-header" onclick="toggleSubLayers(this)">
-                            <button class="expand-btn">+</button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <span class="layer-label">Structural</span>
-                        </div>
-                        <div class="sub-layers">
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Columns</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Beams</span>
-                            </div>
-                            <div class="sub-layer-item">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="layer-label">Trusses</span>
-                            </div>
-                        </div>
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Fullscreen</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="fullscreenToggle" onchange="toggleFullscreen()">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -870,9 +594,6 @@
                     </div>
                     <div class="control-item">
                         <span class="control-label">Navigate:</span> Arrow Keys
-                    </div>
-                    <div class="control-item">
-                        <span class="control-label">Vertical:</span> Space / Shift
                     </div>
                 </div>
             </div>
@@ -959,6 +680,144 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // ============================================
+        // STRUCTURAL DATA DEFINITION
+        // ============================================
+
+        // Define element colors
+        const ELEMENT_COLORS = {
+            COLUMN: 0x4CAF50,      // Green
+            BEAM: 0x2196F3,        // Blue
+            BRACE: 0xFF9800,       // Orange
+            WALL: 0xBDBDBD,        // Gray (transparent)
+            SLAB: 0x9E9E9E,        // Dark Gray (transparent)
+            SUPPORT: 0xFF0000      // Red
+        };
+
+        // Cross-section definitions
+        const CROSS_SECTIONS = {
+            I_350x12x400x20: { type: 'i-beam', height: 0.39, width: 0.4, webThickness: 0.012, flangeThickness: 0.02 },
+            I_350x10x330x15: { type: 'i-beam', height: 0.38, width: 0.33, webThickness: 0.01, flangeThickness: 0.015 },
+        };
+
+        // Structural elements data
+        const structuralData = {
+            // Columns (start point, end point, cross-section, local rotation angle in degrees)
+            columns: [
+                { id: '56', start: [0, 0, 0.25], end: [0, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+                { id: '60', start: [0, 5, 0.25], end: [0, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+                { id: '64', start: [6, 0, 0.25], end: [6, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+                { id: '68', start: [6, 5, 0.25], end: [6, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+            ],
+
+            // Beams (start point, end point, cross-section, local rotation angle in degrees)
+            beams: [
+                { id: '5', start: [0, 5, 3.8], end: [0, 0, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+                { id: '6', start: [0, 0, 3.8], end: [6, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+                { id: '7', start: [6, 0, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+                { id: '8', start: [6, 5, 3.8], end: [0, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+            ],
+
+            // Braces (start point, end point, cross-section, local rotation angle in degrees)
+            braces: [],
+
+            // Slabs (defined by corner points)
+            slabs: [],
+
+            // Walls (defined by corner points, with thickness)
+            walls: [],
+
+            // Supports (point location, type: 'fixed', 'pinned', 'roller')
+            supports: []
+        };
+
+        // ============================================
+        // AUTOMATIC BUILDING CALCULATIONS
+        // ============================================
+        
+        // Calculate building bounds automatically from data
+        function calculateBuildingBounds() {
+            let minX = Infinity, minY = Infinity, minZ = Infinity;
+            let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+            
+            // Check all element types
+            const allElements = [
+                ...structuralData.columns,
+                ...structuralData.beams,
+                ...structuralData.braces
+            ];
+            
+            allElements.forEach(element => {
+                [element.start, element.end].forEach(point => {
+                    minX = Math.min(minX, point[0]);
+                    minY = Math.min(minY, point[1]);
+                    minZ = Math.min(minZ, point[2]);
+                    maxX = Math.max(maxX, point[0]);
+                    maxY = Math.max(maxY, point[1]);
+                    maxZ = Math.max(maxZ, point[2]);
+                });
+            });
+            
+            structuralData.slabs.forEach(slab => {
+                slab.points.forEach(point => {
+                    minX = Math.min(minX, point[0]);
+                    minY = Math.min(minY, point[1]);
+                    minZ = Math.min(minZ, point[2]);
+                    maxX = Math.max(maxX, point[0]);
+                    maxY = Math.max(maxY, point[1]);
+                    maxZ = Math.max(maxZ, point[2]);
+                });
+            });
+            
+            structuralData.walls.forEach(wall => {
+                wall.points.forEach(point => {
+                    minX = Math.min(minX, point[0]);
+                    minY = Math.min(minY, point[1]);
+                    minZ = Math.min(minZ, point[2]);
+                    maxX = Math.max(maxX, point[0]);
+                    maxY = Math.max(maxY, point[1]);
+                    maxZ = Math.max(maxZ, point[2]);
+                });
+            });
+            
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            const centerZ = (minZ + maxZ) / 2;
+            
+            const sizeX = maxX - minX;
+            const sizeY = maxY - minY;
+            const sizeZ = maxZ - minZ;
+            
+            const maxSize = Math.max(sizeX, sizeY, sizeZ);
+            
+            return {
+                center: { x: centerX, y: centerY, z: centerZ },
+                size: { x: sizeX, y: sizeY, z: sizeZ },
+                maxSize: maxSize,
+                bounds: { minX, minY, minZ, maxX, maxY, maxZ }
+            };
+        }
+
+        // ============================================
+        // INITIALIZATION AND SETUP
+        // ============================================
+
+        // Fullscreen Toggle Function
+        function toggleFullscreen() {
+            const body = document.body;
+            const toggle = document.getElementById('fullscreenToggle');
+            
+            if (toggle.checked) {
+                body.classList.add('fullscreen-mode');
+            } else {
+                body.classList.remove('fullscreen-mode');
+            }
+            
+            setTimeout(() => {
+                onWindowResize();
+            }, 100);
+        }
+
         // Canvas Background Toggle Function
         function toggleCanvasBackground() {
             const container = document.getElementById('container');
@@ -1000,20 +859,6 @@
 
         createStars();
 
-        // Layer expansion toggle
-        function toggleSubLayers(header) {
-            const subLayers = header.nextElementSibling;
-            const expandBtn = header.querySelector('.expand-btn');
-            
-            if (subLayers.classList.contains('expanded')) {
-                subLayers.classList.remove('expanded');
-                expandBtn.textContent = '+';
-            } else {
-                subLayers.classList.add('expanded');
-                expandBtn.textContent = '-';
-            }
-        }
-
         // Mobile menu toggle
         const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('navMenu');
@@ -1022,20 +867,26 @@
             navMenu.classList.toggle('active');
         });
 
-        // Three.js Setup
+        // ============================================
+        // THREE.JS SCENE SETUP
+        // ============================================
+
         let scene, camera, renderer;
         let structure;
         let mouseX = 0, mouseY = 0;
         let targetRotationX = 0, targetRotationY = 0;
         let isDragging = false;
         let isPanning = false;
-        let cameraTarget = new THREE.Vector3(20, 5, 0);
-        let cameraPan = new THREE.Vector3(20, 0, 0);
+        let cameraTarget, cameraPan;
         
         let keys = {};
         let moveSpeed = 0.3;
-        let verticalSpeed = 0.2;
         let canvasHasFocus = false;
+        
+        // Calculate building properties automatically
+        const buildingBounds = calculateBuildingBounds();
+        const buildingCenter = buildingBounds.center;
+        const buildingMaxSize = buildingBounds.maxSize;
 
         function init() {
             scene = new THREE.Scene();
@@ -1047,9 +898,19 @@
                 50,
                 container.clientWidth / container.clientHeight,
                 1,
-                1000
+                buildingMaxSize * 10
             );
-            camera.position.set(50, 30, 60);
+            camera.up.set(0, 0, 1);
+            // Auto-position camera based on building size
+            const cameraDistance = buildingMaxSize * 2;
+            camera.position.set(
+                buildingCenter.x + cameraDistance * 0.8,
+                buildingCenter.y + cameraDistance * 0.5,
+                buildingCenter.z + cameraDistance * 0.8
+            );
+            
+            cameraTarget = new THREE.Vector3(buildingCenter.x, buildingCenter.y, buildingCenter.z);
+            cameraPan = new THREE.Vector3(buildingCenter.x, buildingCenter.y, buildingCenter.z);
             camera.lookAt(cameraTarget);
 
             const canvas = document.getElementById('canvas');
@@ -1068,7 +929,7 @@
             directionalLight2.position.set(-20, 20, -20);
             scene.add(directionalLight2);
 
-            createStructure();
+            createStructureFromData();
 
             // Canvas focus management
             canvas.addEventListener('mouseenter', () => {
@@ -1096,256 +957,393 @@
             animate();
         }
 
-        function createStructure() {
+        // ============================================
+        // CROSS-SECTION GEOMETRY CREATION
+        // ============================================
+
+        function createCircularCrossSection(diameter, length) {
+            // Cylinder geometry: radiusTop, radiusBottom, height, radialSegments
+            return new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 32);
+        }
+
+        function createRectangularCrossSection(width, height, length) {
+            // Box geometry: width(X), height(Y), depth(Z)
+            // For extrusion along length, we use: width, height, length
+            return new THREE.BoxGeometry(width, height, length);
+        }
+
+        function createIBeamCrossSection(sectionData, length) {
+            const { height, width, webThickness, flangeThickness } = sectionData;
+            
+            // Create I-beam shape in XY plane, extrude along Z
+            const shape = new THREE.Shape();
+            
+            const halfWidth = width / 2;
+            const halfHeight = height / 2;
+            const halfWeb = webThickness / 2;
+            
+            // Start from bottom-left of bottom flange
+            shape.moveTo(-halfWidth, -halfHeight);
+            shape.lineTo(halfWidth, -halfHeight);
+            shape.lineTo(halfWidth, -halfHeight + flangeThickness);
+            shape.lineTo(halfWeb, -halfHeight + flangeThickness);
+            shape.lineTo(halfWeb, halfHeight - flangeThickness);
+            shape.lineTo(halfWidth, halfHeight - flangeThickness);
+            shape.lineTo(halfWidth, halfHeight);
+            shape.lineTo(-halfWidth, halfHeight);
+            shape.lineTo(-halfWidth, halfHeight - flangeThickness);
+            shape.lineTo(-halfWeb, halfHeight - flangeThickness);
+            shape.lineTo(-halfWeb, -halfHeight + flangeThickness);
+            shape.lineTo(-halfWidth, -halfHeight + flangeThickness);
+            shape.lineTo(-halfWidth, -halfHeight);
+            
+            const extrudeSettings = {
+                depth: length,
+                bevelEnabled: false,
+                steps: 1
+            };
+            
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            
+            // Center the geometry - ExtrudeGeometry starts at Z=0 and goes to Z=length
+            geometry.translate(0, 0, -length / 2);
+            
+            return geometry;
+        }
+
+        // ============================================
+        // ELEMENT CREATION FUNCTIONS
+        // ============================================
+
+        function createStructureFromData() {
             structure = new THREE.Group();
 
-            // STRUCTURE 1 - 3 STORY BUILDING
-            const numStories = 3;
-            const storyHeight = 4;
+            // Create grid at height 0 - size based on building
+            const gridSize = Math.max(buildingBounds.size.x, buildingBounds.size.y) * 2;
+            const gridDivisions = Math.ceil(gridSize / 2);
+            const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x888888, 0xcccccc);
+            gridHelper.rotation.x = Math.PI / 2;
+
+            gridHelper.position.set(buildingCenter.x, buildingCenter.y, 0);
+            structure.add(gridHelper);
+
+            // Create global axes - size based on building
+            const axesSize = buildingMaxSize * 0.3;
+            const axesHelper = new THREE.AxesHelper(axesSize);
+            structure.add(axesHelper);
+
+            // Create supports
+            structuralData.supports.forEach(support => {
+                createSupport(support);
+            });
+
+            // Create columns
+            structuralData.columns.forEach(column => {
+                createColumn(column);
+            });
+
+            // Create beams
+            structuralData.beams.forEach(beam => {
+                createBeam(beam);
+            });
+
+            // Create braces
+            structuralData.braces.forEach(brace => {
+                createBrace(brace);
+            });
+
+            // Create slabs
+            structuralData.slabs.forEach(slab => {
+                createSlab(slab);
+            });
+
+            // Create walls
+            structuralData.walls.forEach(wall => {
+                createWall(wall);
+            });
+
+            scene.add(structure);
+        }
+
+        function createColumn(columnData) {
+            const start = new THREE.Vector3(...columnData.start);
+            const end = new THREE.Vector3(...columnData.end);
+            const section = CROSS_SECTIONS[columnData.section];
             
-            const columnPositions = [
-                [-15, -15], [-15, -5], [-15, 5], [-15, 15],
-                [-5, -15], [-5, -5], [-5, 5], [-5, 15],
-                [5, -15], [5, -5], [5, 5], [5, 15],
-                [15, -15], [15, -5], [15, 5], [15, 15]
-            ];
+            const direction = new THREE.Vector3().subVectors(end, start);
+            const length = direction.length();
+            const midpoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
 
-            for (let story = 0; story < numStories; story++) {
-                const baseHeight = story * storyHeight;
-                
-                columnPositions.forEach((pos) => {
-                    const isOptimized = Math.random() > 0.4;
-                    const radius = isOptimized ? 0.4 : 0.6;
-                    
-                    const geometry = new THREE.CylinderGeometry(radius, radius, storyHeight, 8);
-                    
-                    const stressLevel = Math.random();
-                    let color;
-                    if (stressLevel < 0.5) {
-                        color = new THREE.Color(0x4CAF50);
-                    } else if (stressLevel < 0.8) {
-                        color = new THREE.Color(0xFFC107);
-                    } else {
-                        color = new THREE.Color(0xF44336);
-                    }
-                    
-                    const material = new THREE.MeshPhongMaterial({ 
-                        color: color,
-                        shininess: 30
-                    });
-                    const column = new THREE.Mesh(geometry, material);
-                    
-                    column.position.set(pos[0], baseHeight + storyHeight / 2, pos[1]);
-                    structure.add(column);
-                });
+            let geometry;
+            if (section.type === 'circular') {
+                geometry = createCircularCrossSection(section.diameter, length);
+            } else if (section.type === 'rectangular') {
+                geometry = createRectangularCrossSection(section.width, section.height, length);
+            } else if (section.type === 'i-beam') {
+                geometry = createIBeamCrossSection(section, length);
             }
 
-            for (let story = 0; story <= numStories; story++) {
-                const beamHeight = story * storyHeight;
-                
-                for (let i = -15; i <= 15; i += 10) {
-                    for (let j = -15; j < 15; j += 10) {
-                        const beamGeomX = new THREE.BoxGeometry(10, 0.5, 0.5);
-                        const beamMatX = new THREE.MeshPhongMaterial({ 
-                            color: 0x2196F3,
-                            shininess: 30
-                        });
-                        const beamX = new THREE.Mesh(beamGeomX, beamMatX);
-                        beamX.position.set(i + 5, beamHeight, j);
-                        structure.add(beamX);
+            const material = new THREE.MeshPhongMaterial({
+                color: ELEMENT_COLORS.COLUMN,
+                shininess: 30
+            });
 
-                        const beamGeomZ = new THREE.BoxGeometry(0.5, 0.5, 10);
-                        const beamMatZ = new THREE.MeshPhongMaterial({ 
-                            color: 0x2196F3,
-                            shininess: 30
-                        });
-                        const beamZ = new THREE.Mesh(beamGeomZ, beamMatZ);
-                        beamZ.position.set(j, beamHeight, i + 5);
-                        structure.add(beamZ);
-                    }
-                }
+            const column = new THREE.Mesh(geometry, material);
+            column.position.copy(midpoint);
+
+            // Align column with direction vector (columns are vertical, so align with Y-axis by default)
+            if (section.type === 'circular') {
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+                column.setRotationFromQuaternion(quaternion);
+            } else if (section.type === 'rectangular' || section.type === 'i-beam') {
+                // For extruded shapes, the extrusion is along Z, so we need different alignment
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction.normalize());
+                column.setRotationFromQuaternion(quaternion);
             }
 
-            for (let story = 0; story <= numStories; story++) {
-                const slabHeight = story * storyHeight;
-                
-                const slabGeometry = new THREE.BoxGeometry(32, 0.3, 32);
-                const slabMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0x9E9E9E,
-                    transparent: true,
-                    opacity: 0.6,
-                    shininess: 30
-                });
-                const slab = new THREE.Mesh(slabGeometry, slabMaterial);
-                slab.position.set(0, slabHeight, 0);
-                structure.add(slab);
+            // Apply local rotation around the longitudinal axis (start to end direction)
+            if (columnData.rotation !== 0) {
+                const longitudinalAxis = direction.clone().normalize();
+                column.rotateOnWorldAxis(longitudinalAxis, (columnData.rotation * Math.PI) / 180);
             }
 
-            const wallMaterial = new THREE.MeshPhongMaterial({ 
-                color: 0xBDBDBD,
+            structure.add(column);
+        }
+
+        function createBeam(beamData) {
+            const start = new THREE.Vector3(...beamData.start);
+            const end = new THREE.Vector3(...beamData.end);
+            const section = CROSS_SECTIONS[beamData.section];
+            
+            const direction = new THREE.Vector3().subVectors(end, start);
+            const length = direction.length();
+            const midpoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+
+            let geometry;
+            if (section.type === 'rectangular') {
+                geometry = createRectangularCrossSection(section.width, section.height, length);
+            } else if (section.type === 'i-beam') {
+                geometry = createIBeamCrossSection(section, length);
+            } else if (section.type === 'circular') {
+                geometry = createCircularCrossSection(section.diameter, length);
+            }
+
+            const material = new THREE.MeshPhongMaterial({
+                color: ELEMENT_COLORS.BEAM,
+                shininess: 30
+            });
+
+            const beam = new THREE.Mesh(geometry, material);
+            beam.position.copy(midpoint);
+
+            // Align beam with direction vector
+            if (section.type === 'circular') {
+                // For cylinder, align Y-axis with direction
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+                beam.setRotationFromQuaternion(quaternion);
+            } else {
+                // For extruded shapes (rectangular and I-beam), align Z-axis with direction
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction.normalize());
+                beam.setRotationFromQuaternion(quaternion);
+            }
+
+            // Apply local rotation around the longitudinal axis (start to end direction)
+            if (beamData.rotation !== 0) {
+                const longitudinalAxis = direction.clone().normalize();
+                beam.rotateOnWorldAxis(longitudinalAxis, (beamData.rotation * Math.PI) / 180);
+            }
+
+            structure.add(beam);
+        }
+
+        function createBrace(braceData) {
+            const start = new THREE.Vector3(...braceData.start);
+            const end = new THREE.Vector3(...braceData.end);
+            const section = CROSS_SECTIONS[braceData.section];
+            
+            const direction = new THREE.Vector3().subVectors(end, start);
+            const length = direction.length();
+            const midpoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+
+            let geometry;
+            if (section.type === 'circular') {
+                geometry = createCircularCrossSection(section.diameter, length);
+            } else if (section.type === 'rectangular') {
+                geometry = createRectangularCrossSection(section.width, section.height, length);
+            } else if (section.type === 'i-beam') {
+                geometry = createIBeamCrossSection(section, length);
+            }
+
+            const material = new THREE.MeshPhongMaterial({
+                color: ELEMENT_COLORS.BRACE,
+                shininess: 30
+            });
+
+            const brace = new THREE.Mesh(geometry, material);
+            brace.position.copy(midpoint);
+
+            // Align brace with direction vector
+            if (section.type === 'circular') {
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+                brace.setRotationFromQuaternion(quaternion);
+            } else {
+                // For extruded shapes
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction.normalize());
+                brace.setRotationFromQuaternion(quaternion);
+            }
+
+            structure.add(brace);
+        }
+
+        function createSlab(slabData) {
+            const points = slabData.points.map(p => new THREE.Vector3(...p));
+            
+            // Calculate dimensions
+            const width = points[1].distanceTo(points[0]);
+            const depth = points[2].distanceTo(points[1]);
+            
+            // Calculate center
+            const center = new THREE.Vector3();
+            points.forEach(p => center.add(p));
+            center.divideScalar(points.length);
+
+            const geometry = new THREE.BoxGeometry(width, slabData.thickness, depth);
+            const material = new THREE.MeshPhongMaterial({
+                color: ELEMENT_COLORS.SLAB,
+                transparent: true,
+                opacity: 0.6,
+                shininess: 30
+            });
+
+            const slab = new THREE.Mesh(geometry, material);
+            slab.position.copy(center);
+
+            structure.add(slab);
+        }
+
+        function createWall(wallData) {
+            const points = wallData.points.map(p => new THREE.Vector3(...p));
+            
+            // Calculate dimensions
+            const width = points[1].distanceTo(points[0]);
+            const height = points[2].y - points[0].y;
+            
+            // Calculate center
+            const center = new THREE.Vector3();
+            points.forEach(p => center.add(p));
+            center.divideScalar(points.length);
+
+            // Determine orientation
+            const isAlongX = Math.abs(points[1].x - points[0].x) > 0.01;
+            
+            const geometry = isAlongX ? 
+                new THREE.BoxGeometry(width, height, wallData.thickness) :
+                new THREE.BoxGeometry(wallData.thickness, height, width);
+
+            const material = new THREE.MeshPhongMaterial({
+                color: ELEMENT_COLORS.WALL,
                 transparent: true,
                 opacity: 0.4,
                 side: THREE.DoubleSide,
                 shininess: 20
             });
 
-            const totalHeight = numStories * storyHeight;
-            const wallThickness = 0.2;
+            const wall = new THREE.Mesh(geometry, material);
+            wall.position.copy(center);
 
-            const northWall = new THREE.Mesh(
-                new THREE.BoxGeometry(32, totalHeight, wallThickness),
-                wallMaterial
-            );
-            northWall.position.set(0, totalHeight / 2, -16);
-            structure.add(northWall);
+            structure.add(wall);
+        }
 
-            const southWall = new THREE.Mesh(
-                new THREE.BoxGeometry(32, totalHeight, wallThickness),
-                wallMaterial
-            );
-            southWall.position.set(0, totalHeight / 2, 16);
-            structure.add(southWall);
+        function createSupport(supportData) {
+            const position = new THREE.Vector3(...supportData.location);
+            const group = new THREE.Group();
 
-            const eastWall = new THREE.Mesh(
-                new THREE.BoxGeometry(wallThickness, totalHeight, 32),
-                wallMaterial
-            );
-            eastWall.position.set(16, totalHeight / 2, 0);
-            structure.add(eastWall);
-
-            const westWall = new THREE.Mesh(
-                new THREE.BoxGeometry(wallThickness, totalHeight, 32),
-                wallMaterial
-            );
-            westWall.position.set(-16, totalHeight / 2, 0);
-            structure.add(westWall);
-
-            // STRUCTURE 2
-            const structure2NumStories = 2;
-            const structure2Height = 4;
-            const structure2OffsetX = 45;
-            
-            const structure2Columns = [
-                [0, 0], [0, 8], [0, 16],
-                [8, 0], [8, 8], [8, 16],
-                [16, 0], [16, 8], [16, 16]
-            ];
-
-            for (let story = 0; story < structure2NumStories; story++) {
-                const baseHeight = story * structure2Height;
-                
-                structure2Columns.forEach((pos) => {
-                    const radius = 0.5;
-                    const geometry = new THREE.CylinderGeometry(radius, radius, structure2Height, 8);
-                    
-                    const stressLevel = Math.random();
-                    let color;
-                    if (stressLevel < 0.6) {
-                        color = new THREE.Color(0x00BCD4);
-                    } else {
-                        color = new THREE.Color(0xFF9800);
-                    }
-                    
-                    const material = new THREE.MeshPhongMaterial({ 
-                        color: color,
-                        shininess: 30
-                    });
-                    const column = new THREE.Mesh(geometry, material);
-                    
-                    column.position.set(
-                        structure2OffsetX + pos[0], 
-                        baseHeight + structure2Height / 2, 
-                        pos[1] - 8
-                    );
-                    structure.add(column);
-                });
-            }
-
-            for (let story = 0; story <= structure2NumStories; story++) {
-                const beamHeight = story * structure2Height;
-                
-                for (let i = 0; i <= 16; i += 8) {
-                    for (let j = 0; j < 16; j += 8) {
-                        const beamGeomX = new THREE.BoxGeometry(8, 0.4, 0.4);
-                        const beamMatX = new THREE.MeshPhongMaterial({ 
-                            color: 0x9C27B0,
-                            shininess: 30
-                        });
-                        const beamX = new THREE.Mesh(beamGeomX, beamMatX);
-                        beamX.position.set(structure2OffsetX + i + 4, beamHeight, j - 8);
-                        structure.add(beamX);
-
-                        const beamGeomZ = new THREE.BoxGeometry(0.4, 0.4, 8);
-                        const beamMatZ = new THREE.MeshPhongMaterial({ 
-                            color: 0x9C27B0,
-                            shininess: 30
-                        });
-                        const beamZ = new THREE.Mesh(beamGeomZ, beamMatZ);
-                        beamZ.position.set(structure2OffsetX + j, beamHeight, i - 8);
-                        structure.add(beamZ);
-                    }
-                }
-            }
-
-            for (let story = 0; story <= structure2NumStories; story++) {
-                const slabHeight = story * structure2Height;
-                
-                const slabGeometry = new THREE.BoxGeometry(18, 0.25, 18);
-                const slabMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xE0E0E0,
-                    transparent: true,
-                    opacity: 0.6,
+            if (supportData.type === 'fixed') {
+                // Fixed support - represented by a pyramid/cone
+                const geometry = new THREE.ConeGeometry(0.3, 0.6, 4);
+                const material = new THREE.MeshPhongMaterial({
+                    color: ELEMENT_COLORS.SUPPORT,
                     shininess: 30
                 });
-                const slab = new THREE.Mesh(slabGeometry, slabMaterial);
-                slab.position.set(structure2OffsetX + 8, slabHeight, 0);
-                structure.add(slab);
+                const cone = new THREE.Mesh(geometry, material);
+                cone.rotation.x = Math.PI;
+                cone.position.y = -0.3;
+                group.add(cone);
+
+                // Add base plate
+                const plateGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 8);
+                const plate = new THREE.Mesh(plateGeom, material);
+                plate.position.y = -0.65;
+                group.add(plate);
+
+            } else if (supportData.type === 'pinned') {
+                // Pinned support - represented by a triangle
+                const shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                shape.lineTo(-0.3, -0.5);
+                shape.lineTo(0.3, -0.5);
+                shape.lineTo(0, 0);
+
+                const extrudeSettings = { depth: 0.1, bevelEnabled: false };
+                const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                const material = new THREE.MeshPhongMaterial({
+                    color: ELEMENT_COLORS.SUPPORT,
+                    shininess: 30
+                });
+                const triangle = new THREE.Mesh(geometry, material);
+                triangle.position.z = -0.05;
+                group.add(triangle);
+
+                // Add circle at top
+                const circleGeom = new THREE.SphereGeometry(0.15, 16, 16);
+                const circle = new THREE.Mesh(circleGeom, material);
+                circle.position.y = 0;
+                group.add(circle);
+
+            } else if (supportData.type === 'roller') {
+                // Roller support - triangle with rollers
+                const shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                shape.lineTo(-0.3, -0.5);
+                shape.lineTo(0.3, -0.5);
+                shape.lineTo(0, 0);
+
+                const extrudeSettings = { depth: 0.1, bevelEnabled: false };
+                const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                const material = new THREE.MeshPhongMaterial({
+                    color: ELEMENT_COLORS.SUPPORT,
+                    shininess: 30
+                });
+                const triangle = new THREE.Mesh(geometry, material);
+                triangle.position.z = -0.05;
+                group.add(triangle);
+
+                // Add rollers
+                const rollerGeom = new THREE.CylinderGeometry(0.1, 0.1, 0.15, 16);
+                const roller1 = new THREE.Mesh(rollerGeom, material);
+                roller1.position.set(-0.15, -0.6, 0);
+                roller1.rotation.z = Math.PI / 2;
+                group.add(roller1);
+
+                const roller2 = new THREE.Mesh(rollerGeom, material);
+                roller2.position.set(0.15, -0.6, 0);
+                roller2.rotation.z = Math.PI / 2;
+                group.add(roller2);
             }
 
-            const wall2Material = new THREE.MeshPhongMaterial({ 
-                color: 0xD1C4E9,
-                transparent: true,
-                opacity: 0.35,
-                side: THREE.DoubleSide,
-                shininess: 20
-            });
-
-            const totalHeight2 = structure2NumStories * structure2Height;
-
-            const s2NorthWall = new THREE.Mesh(
-                new THREE.BoxGeometry(18, totalHeight2, wallThickness),
-                wall2Material
-            );
-            s2NorthWall.position.set(structure2OffsetX + 8, totalHeight2 / 2, -9);
-            structure.add(s2NorthWall);
-
-            const s2SouthWall = new THREE.Mesh(
-                new THREE.BoxGeometry(18, totalHeight2, wallThickness),
-                wall2Material
-            );
-            s2SouthWall.position.set(structure2OffsetX + 8, totalHeight2 / 2, 9);
-            structure.add(s2SouthWall);
-
-            const s2EastWall = new THREE.Mesh(
-                new THREE.BoxGeometry(wallThickness, totalHeight2, 18),
-                wall2Material
-            );
-            s2EastWall.position.set(structure2OffsetX + 17, totalHeight2 / 2, 0);
-            structure.add(s2EastWall);
-
-            const s2WestWall = new THREE.Mesh(
-                new THREE.BoxGeometry(wallThickness, totalHeight2, 18),
-                wall2Material
-            );
-            s2WestWall.position.set(structure2OffsetX - 1, totalHeight2 / 2, 0);
-            structure.add(s2WestWall);
-
-            const gridHelper = new THREE.GridHelper(120, 60, 0x888888, 0xcccccc);
-            gridHelper.position.set(20, 0, 0);
-            structure.add(gridHelper);
-
-            scene.add(structure);
+            group.position.copy(position);
+            structure.add(group);
         }
+
+        // ============================================
+        // INTERACTION HANDLERS
+        // ============================================
 
         function onMouseDown(e) {
             if (e.button === 0) {
@@ -1427,7 +1425,7 @@
         }
 
         function onKeyDown(e) {
-            const navKeys = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'space'];
+            const navKeys = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
             const keyLower = e.key.toLowerCase();
             const codeLower = e.code.toLowerCase();
             
@@ -1473,15 +1471,6 @@
             if (keys['d'] || keys['arrowright']) {
                 camera.position.addScaledVector(right, moveSpeed);
                 cameraTarget.addScaledVector(right, moveSpeed);
-            }
-
-            if (keys[' '] || keys['space']) {
-                camera.position.y += verticalSpeed;
-                cameraTarget.y += verticalSpeed;
-            }
-            if (keys['shift'] || keys['shiftleft'] || keys['shiftright']) {
-                camera.position.y -= verticalSpeed;
-                cameraTarget.y -= verticalSpeed;
             }
 
             cameraPan.copy(cameraTarget);
