@@ -666,7 +666,7 @@
             <div class="footer-section">
                 <h4>Contact</h4>
                 <ul>
-                    <li><a href="mailto:info@structureview.com">info@structureview.com</a></li>
+                    <li><a href="/cdn-cgi/l/email-protection#85ecebe3eac5f6f1f7f0e6f1f0f7e0f3ece0f2abe6eae8"><span class="__cf_email__" data-cfemail="d0b9beb6bf90a3a4a2a5b3a4a5a2b5a6b9b5a7feb3bfbd">[email&#160;protected]</span></a></li>
                     <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
                     <li>123 Engineering Blvd</li>
                     <li>San Francisco, CA 94105</li>
@@ -678,7 +678,7 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // ============================================
         // STRUCTURAL DATA DEFINITION
@@ -728,7 +728,12 @@
             walls: [],
 
             // Supports (point location, type: 'fixed', 'pinned', 'roller')
-            supports: []
+            supports: [
+        { id: 'SUP1', location: [0.000, 0.000, 0.250], type: 'pinned' },
+        { id: 'SUP2', location: [0.000, 5.000, 0.250], type: 'pinned' },
+        { id: 'SUP3', location: [6.000, 0.000, 0.250], type: 'pinned' },
+        { id: 'SUP4', location: [6.000, 5.000, 0.250], type: 'pinned' },
+    ]
         };
 
         // ============================================
@@ -900,7 +905,10 @@
                 1,
                 buildingMaxSize * 10
             );
+            
+            // Set Z as up axis (vertical)
             camera.up.set(0, 0, 1);
+            
             // Auto-position camera based on building size
             const cameraDistance = buildingMaxSize * 2;
             camera.position.set(
@@ -1018,12 +1026,13 @@
         function createStructureFromData() {
             structure = new THREE.Group();
 
-            // Create grid at height 0 - size based on building
+            // Create grid perpendicular to Z axis (horizontal plane in XY)
             const gridSize = Math.max(buildingBounds.size.x, buildingBounds.size.y) * 2;
             const gridDivisions = Math.ceil(gridSize / 2);
             const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x888888, 0xcccccc);
+            
+            // GridHelper is created in XZ plane by default, rotate to XY plane
             gridHelper.rotation.x = Math.PI / 2;
-
             gridHelper.position.set(buildingCenter.x, buildingCenter.y, 0);
             structure.add(gridHelper);
 
@@ -1342,7 +1351,7 @@
         }
 
         // ============================================
-        // INTERACTION HANDLERS
+        // INTERACTION HANDLERS (FIXED FOR Z-UP)
         // ============================================
 
         function onMouseDown(e) {
@@ -1362,8 +1371,9 @@
                 const deltaX = e.clientX - mouseX;
                 const deltaY = e.clientY - mouseY;
                 
-                targetRotationY += deltaX * 0.005;
-                targetRotationX += deltaY * 0.005;
+                // For Z-up: horizontal drag rotates around Z axis, vertical drag rotates around horizontal
+                targetRotationY += deltaX * 0.005;  // This will rotate around Z (vertical axis)
+                targetRotationX += deltaY * 0.005;  // This will tilt around horizontal axis
                 
                 mouseX = e.clientX;
                 mouseY = e.clientY;
@@ -1373,15 +1383,20 @@
                 
                 const panSpeed = 0.05;
                 
+                // Get camera direction
                 const cameraDirection = new THREE.Vector3();
                 camera.getWorldDirection(cameraDirection);
                 
+                // Calculate right vector (perpendicular to camera direction and up vector)
+                // For Z-up, use (0, 0, 1) as the up vector
                 const cameraRight = new THREE.Vector3();
-                cameraRight.crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
+                cameraRight.crossVectors(cameraDirection, new THREE.Vector3(0, 0, 1)).normalize();
                 
+                // Calculate actual up vector relative to camera
                 const cameraUp = new THREE.Vector3();
                 cameraUp.crossVectors(cameraRight, cameraDirection).normalize();
                 
+                // Apply panning
                 const panX = cameraRight.clone().multiplyScalar(-deltaX * panSpeed);
                 const panY = cameraUp.clone().multiplyScalar(deltaY * panSpeed);
                 
@@ -1447,14 +1462,18 @@
         function updateWalkMovement() {
             if (!canvasHasFocus) return;
 
+            // Get forward direction and project it onto the XY plane (horizontal plane in Z-up)
             const forward = new THREE.Vector3();
             camera.getWorldDirection(forward);
-            forward.y = 0;
+            forward.z = 0; // Changed from forward.y = 0 (keep movement in XY plane)
             forward.normalize();
 
+            // Calculate right vector perpendicular to forward in XY plane
+            // For Z-up system, cross with (0, 0, 1)
             const right = new THREE.Vector3();
-            right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+            right.crossVectors(forward, new THREE.Vector3(0, 0, 1)).normalize();
 
+            // Apply movement
             if (keys['w'] || keys['arrowup']) {
                 camera.position.addScaledVector(forward, moveSpeed);
                 cameraTarget.addScaledVector(forward, moveSpeed);
@@ -1488,15 +1507,19 @@
 
             updateWalkMovement();
 
-            structure.rotation.y += (targetRotationY - structure.rotation.y) * 0.1;
+            // Set structure position to building center so rotation happens around the center
+            structure.position.set(buildingCenter.x, buildingCenter.y, buildingCenter.z);
+            
+            // For Z-up coordinate system:
+            // rotation.z = rotation around vertical (Z) axis - controlled by horizontal mouse drag
+            // rotation.x = tilt rotation - controlled by vertical mouse drag  
+            structure.rotation.z += (targetRotationY - structure.rotation.z) * 0.1;
             structure.rotation.x += (targetRotationX - structure.rotation.x) * 0.1;
 
             cameraTarget.x = cameraPan.x;
-            cameraTarget.z = cameraPan.z;
-            
-            camera.lookAt(cameraTarget);
+            cameraTarget.y = cameraPan.y;
 
-            structure.rotation.y += 0.001;
+                camera.lookAt(cameraTarget);
 
             renderer.render(scene, camera);
         }
