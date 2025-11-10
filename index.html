@@ -1375,7 +1375,7 @@
                 
                 // For Z-up: horizontal drag rotates around Z axis, vertical drag rotates around horizontal
                 targetRotationY += deltaX * 0.005;  // This will rotate around Z (vertical axis)
-                targetRotationX += deltaY * 0.005;  // This will tilt around horizontal axis
+                targetRotationX -= deltaY * 0.005;  // This will tilt around horizontal axis
                 
                 mouseX = e.clientX;
                 mouseY = e.clientY;
