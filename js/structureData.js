@@ -38,7 +38,7 @@ const structuralData = {
 
     // Braces (start point, end point, cross-section, local rotation angle in degrees)
     braces: [ 
-        { id: '155', start: [0, 0, .25], end: [6, 5, 3.8], section: 'circular', rotation: 0 },
+        { id: '155', start: [0, 0, .25], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
 ],
 
     // Slabs (defined by corner points)
