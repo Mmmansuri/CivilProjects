@@ -4,18 +4,12 @@
 
 let scene, camera, renderer;
 let structure;
-let buildingBounds, buildingCenter, buildingMaxSize; // Add these global variables
 
 function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf8fafc);
 
     const container = document.getElementById('container');
-
-    // ⭐ CALCULATE BUILDING BOUNDS FIRST ⭐
-    buildingBounds = calculateBuildingBounds();
-    buildingCenter = buildingBounds.center;
-    buildingMaxSize = buildingBounds.maxSize;
 
     camera = new THREE.PerspectiveCamera(
         50,
@@ -56,9 +50,6 @@ function init() {
     scene.add(directionalLight2);
 
     createStructureFromData();
-
-    // ⭐ INITIALIZE ROTATION CENTER ⭐
-    initializeRotationCenter();
 
     // Canvas focus management
     canvas.addEventListener('mouseenter', () => {

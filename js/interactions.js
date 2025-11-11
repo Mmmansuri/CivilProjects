@@ -1,8 +1,9 @@
 // ============================================
-// INTERACTION HANDLERS (ROTATION AROUND GRID CENTER)
+// INTERACTION HANDLERS (FIXED FOR Z-UP)
 // ============================================
 
 let mouseX = 0, mouseY = 0;
+let targetRotationX = 0, targetRotationY = 0;
 let isDragging = false;
 let isPanning = false;
 let cameraTarget, cameraPan;
@@ -10,20 +11,6 @@ let cameraTarget, cameraPan;
 let keys = {};
 let moveSpeed = 0.3;
 let canvasHasFocus = false;
-
-// Rotation will always be around building center
-let rotationCenter = new THREE.Vector3(0, 0, 0);
-
-// Function to initialize rotation center (call after building is created)
-function initializeRotationCenter() {
-    if (typeof buildingBounds !== 'undefined' && buildingBounds.center) {
-        rotationCenter.set(
-            buildingBounds.center.x,
-            buildingBounds.center.y,
-            buildingBounds.center.z
-        );
-    }
-}
 
 function onMouseDown(e) {
     if (e.button === 0) {
@@ -42,44 +29,12 @@ function onMouseMove(e) {
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
         
-        // Rotation speeds
-        const rotationSpeed = 0.01;
-        
-        // Calculate rotation angles
-        const deltaAzimuth = -deltaX * rotationSpeed;   // Horizontal rotation around Z
-        const deltaElevation = deltaY * rotationSpeed;  // Vertical rotation
-        
-        // Get current camera offset from rotation center
-        const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
-        
-        // Convert to spherical coordinates
-        const spherical = new THREE.Spherical();
-        spherical.setFromVector3(offset);
-        
-        // Apply rotations
-        spherical.theta += deltaAzimuth;  // Azimuth (horizontal rotation around Z)
-        spherical.phi += deltaElevation;  // Elevation (vertical tilt)
-        
-        // Limit elevation to prevent flipping
-        const minPhi = 0.1;
-        const maxPhi = Math.PI - 0.1;
-        spherical.phi = Math.max(minPhi, Math.min(maxPhi, spherical.phi));
-        
-        // Convert back to Cartesian coordinates
-        offset.setFromSpherical(spherical);
-        
-        // Update camera position
-        camera.position.copy(rotationCenter).add(offset);
-        
-        // Make camera look at rotation center
-        camera.lookAt(rotationCenter);
-        
-        // Update camera target
-        cameraTarget.copy(rotationCenter);
+        // For Z-up: horizontal drag rotates around Z axis, vertical drag rotates around horizontal
+        targetRotationY += deltaX * 0.005;  // This will rotate around Z (vertical axis)
+        targetRotationX -= deltaY * 0.005;  // This will tilt around horizontal axis
         
         mouseX = e.clientX;
         mouseY = e.clientY;
-        
     } else if (isPanning) {
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
@@ -104,10 +59,6 @@ function onMouseMove(e) {
         const panY = cameraUp.clone().multiplyScalar(deltaY * panSpeed);
         
         camera.position.add(panX).add(panY);
-        
-        // Also move rotation center when panning
-        rotationCenter.add(panX).add(panY);
-        
         cameraTarget.add(panX).add(panY);
         cameraPan.copy(cameraTarget);
         
@@ -124,25 +75,26 @@ function onMouseUp() {
 function onWheel(e) {
     e.preventDefault();
     
-    // Zoom towards/away from rotation center
-    const zoomAmount = e.deltaY > 0 ? 1.1 : 0.9;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+    );
     
-    // Get vector from rotation center to camera
-    const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
     
-    // Scale the offset (zoom in/out)
-    offset.multiplyScalar(zoomAmount);
+    const zoomDirection = raycaster.ray.direction.clone();
+    const zoomAmount = e.deltaY > 0 ? 2 : -2;
     
-    // Limit minimum distance
-    const minDistance = 5;
-    if (offset.length() < minDistance) {
-        offset.normalize().multiplyScalar(minDistance);
-    }
-    
-    // Update camera position
-    camera.position.copy(rotationCenter).add(offset);
-    cameraTarget.copy(rotationCenter);
+    camera.position.addScaledVector(zoomDirection, zoomAmount);
+    cameraTarget.addScaledVector(zoomDirection, zoomAmount);
     cameraPan.copy(cameraTarget);
+    
+    const distance = camera.position.length();
+    if (distance < 5) {
+        camera.position.normalize().multiplyScalar(5);
+    }
 }
 
 function onKeyDown(e) {
@@ -171,7 +123,7 @@ function updateWalkMovement() {
     // Get forward direction and project it onto the XY plane (horizontal plane in Z-up)
     const forward = new THREE.Vector3();
     camera.getWorldDirection(forward);
-    forward.z = 0; // Keep movement in XY plane
+    forward.z = 0; // Changed from forward.y = 0 (keep movement in XY plane)
     forward.normalize();
 
     // Calculate right vector perpendicular to forward in XY plane
@@ -183,23 +135,19 @@ function updateWalkMovement() {
     if (keys['w'] || keys['arrowup']) {
         camera.position.addScaledVector(forward, moveSpeed);
         cameraTarget.addScaledVector(forward, moveSpeed);
-        rotationCenter.addScaledVector(forward, moveSpeed);
     }
     if (keys['s'] || keys['arrowdown']) {
         camera.position.addScaledVector(forward, -moveSpeed);
         cameraTarget.addScaledVector(forward, -moveSpeed);
-        rotationCenter.addScaledVector(forward, -moveSpeed);
     }
 
     if (keys['a'] || keys['arrowleft']) {
         camera.position.addScaledVector(right, -moveSpeed);
         cameraTarget.addScaledVector(right, -moveSpeed);
-        rotationCenter.addScaledVector(right, -moveSpeed);
     }
     if (keys['d'] || keys['arrowright']) {
         camera.position.addScaledVector(right, moveSpeed);
         cameraTarget.addScaledVector(right, moveSpeed);
-        rotationCenter.addScaledVector(right, moveSpeed);
     }
 
     cameraPan.copy(cameraTarget);
