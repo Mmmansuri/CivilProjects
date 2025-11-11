@@ -34,12 +34,11 @@ const structuralData = {
         { id: '6', start: [0, 0, 3.8], end: [6, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
         { id: '7', start: [6, 0, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
         { id: '8', start: [6, 5, 3.8], end: [0, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: '17', start: [0, 0, .25], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
     ],
 
     // Braces (start point, end point, cross-section, local rotation angle in degrees)
-    braces: [ 
-        { id: '155', start: [0, 0, .25], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-],
+    braces: [ ],
 
     // Slabs (defined by corner points)
 // Slabs (defined by corner points)
