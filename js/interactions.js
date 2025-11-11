@@ -1,5 +1,5 @@
 // ============================================
-// INTERACTION HANDLERS (ARCBALL ROTATION)
+// INTERACTION HANDLERS (ROTATION AROUND GRID CENTER)
 // ============================================
 
 let mouseX = 0, mouseY = 0;
@@ -7,25 +7,21 @@ let isDragging = false;
 let isPanning = false;
 let cameraTarget, cameraPan;
 
-// Rotation center - initialize with a default value
-let rotationCenter = new THREE.Vector3(0, 0, 0);
-let cameraDistance = 50;
-
 let keys = {};
 let moveSpeed = 0.3;
 let canvasHasFocus = false;
 
-// Helper function to get building center (call this after structure is created)
+// Rotation will always be around building center
+let rotationCenter = new THREE.Vector3(0, 0, 0);
+
+// Function to initialize rotation center (call after building is created)
 function initializeRotationCenter() {
     if (typeof buildingBounds !== 'undefined' && buildingBounds.center) {
         rotationCenter.set(
-            buildingBounds.center.x, 
-            buildingBounds.center.y, 
+            buildingBounds.center.x,
+            buildingBounds.center.y,
             buildingBounds.center.z
         );
-    } else {
-        // Fallback to origin
-        rotationCenter.set(0, 0, 0);
     }
 }
 
@@ -33,41 +29,6 @@ function onMouseDown(e) {
     if (e.button === 0) {
         isDragging = true;
         isPanning = false;
-        
-        // Raycast to find the 3D point where user clicked
-        const rect = renderer.domElement.getBoundingClientRect();
-        const mouse = new THREE.Vector2(
-            ((e.clientX - rect.left) / rect.width) * 2 - 1,
-            -((e.clientY - rect.top) / rect.height) * 2 + 1
-        );
-        
-        const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
-        
-        // Check intersection with structure
-        if (typeof structure !== 'undefined' && structure.children) {
-            const intersects = raycaster.intersectObjects(structure.children, true);
-            
-            if (intersects.length > 0) {
-                // Set rotation center to the clicked point
-                rotationCenter.copy(intersects[0].point);
-            } else {
-                // If no intersection, use building center or origin
-                if (typeof buildingBounds !== 'undefined' && buildingBounds.center) {
-                    rotationCenter.set(
-                        buildingBounds.center.x, 
-                        buildingBounds.center.y, 
-                        buildingBounds.center.z
-                    );
-                } else {
-                    rotationCenter.set(0, 0, 5);
-                }
-            }
-        }
-        
-        // Store camera distance from rotation center
-        cameraDistance = camera.position.distanceTo(rotationCenter);
-        
     } else if (e.button === 2) {
         isPanning = true;
         isDragging = false;
@@ -81,25 +42,25 @@ function onMouseMove(e) {
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
         
-        // Arcball rotation speeds
+        // Rotation speeds
         const rotationSpeed = 0.01;
         
-        // Calculate angles
-        const deltaAzimuth = deltaX * rotationSpeed;   // Horizontal rotation around Z
+        // Calculate rotation angles
+        const deltaAzimuth = -deltaX * rotationSpeed;   // Horizontal rotation around Z
         const deltaElevation = deltaY * rotationSpeed;  // Vertical rotation
         
         // Get current camera offset from rotation center
         const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
         
-        // Convert to spherical coordinates for easier manipulation
+        // Convert to spherical coordinates
         const spherical = new THREE.Spherical();
         spherical.setFromVector3(offset);
         
         // Apply rotations
-        spherical.theta -= deltaAzimuth;  // Azimuth (horizontal rotation)
-        spherical.phi -= deltaElevation;  // Elevation (vertical rotation)
+        spherical.theta += deltaAzimuth;  // Azimuth (horizontal rotation around Z)
+        spherical.phi += deltaElevation;  // Elevation (vertical tilt)
         
-        // Limit elevation to prevent flipping (keep between 0.1 and PI-0.1)
+        // Limit elevation to prevent flipping
         const minPhi = 0.1;
         const maxPhi = Math.PI - 0.1;
         spherical.phi = Math.max(minPhi, Math.min(maxPhi, spherical.phi));
@@ -113,10 +74,8 @@ function onMouseMove(e) {
         // Make camera look at rotation center
         camera.lookAt(rotationCenter);
         
-        // Update camera target if it exists
-        if (typeof cameraTarget !== 'undefined') {
-            cameraTarget.copy(rotationCenter);
-        }
+        // Update camera target
+        cameraTarget.copy(rotationCenter);
         
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -146,14 +105,11 @@ function onMouseMove(e) {
         
         camera.position.add(panX).add(panY);
         
-        if (typeof cameraTarget !== 'undefined') {
-            cameraTarget.add(panX).add(panY);
-        }
-        rotationCenter.add(panX).add(panY); // Also move rotation center
+        // Also move rotation center when panning
+        rotationCenter.add(panX).add(panY);
         
-        if (typeof cameraPan !== 'undefined') {
-            cameraPan.copy(cameraTarget);
-        }
+        cameraTarget.add(panX).add(panY);
+        cameraPan.copy(cameraTarget);
         
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -178,21 +134,15 @@ function onWheel(e) {
     offset.multiplyScalar(zoomAmount);
     
     // Limit minimum distance
-    const minDistance = 2;
+    const minDistance = 5;
     if (offset.length() < minDistance) {
         offset.normalize().multiplyScalar(minDistance);
     }
     
     // Update camera position
     camera.position.copy(rotationCenter).add(offset);
-    
-    if (typeof cameraTarget !== 'undefined') {
-        cameraTarget.copy(rotationCenter);
-    }
-    
-    if (typeof cameraPan !== 'undefined') {
-        cameraPan.copy(cameraTarget);
-    }
+    cameraTarget.copy(rotationCenter);
+    cameraPan.copy(cameraTarget);
 }
 
 function onKeyDown(e) {
@@ -232,35 +182,25 @@ function updateWalkMovement() {
     // Apply movement
     if (keys['w'] || keys['arrowup']) {
         camera.position.addScaledVector(forward, moveSpeed);
-        if (typeof cameraTarget !== 'undefined') {
-            cameraTarget.addScaledVector(forward, moveSpeed);
-        }
+        cameraTarget.addScaledVector(forward, moveSpeed);
         rotationCenter.addScaledVector(forward, moveSpeed);
     }
     if (keys['s'] || keys['arrowdown']) {
         camera.position.addScaledVector(forward, -moveSpeed);
-        if (typeof cameraTarget !== 'undefined') {
-            cameraTarget.addScaledVector(forward, -moveSpeed);
-        }
+        cameraTarget.addScaledVector(forward, -moveSpeed);
         rotationCenter.addScaledVector(forward, -moveSpeed);
     }
 
     if (keys['a'] || keys['arrowleft']) {
         camera.position.addScaledVector(right, -moveSpeed);
-        if (typeof cameraTarget !== 'undefined') {
-            cameraTarget.addScaledVector(right, -moveSpeed);
-        }
+        cameraTarget.addScaledVector(right, -moveSpeed);
         rotationCenter.addScaledVector(right, -moveSpeed);
     }
     if (keys['d'] || keys['arrowright']) {
         camera.position.addScaledVector(right, moveSpeed);
-        if (typeof cameraTarget !== 'undefined') {
-            cameraTarget.addScaledVector(right, moveSpeed);
-        }
+        cameraTarget.addScaledVector(right, moveSpeed);
         rotationCenter.addScaledVector(right, moveSpeed);
     }
 
-    if (typeof cameraPan !== 'undefined' && typeof cameraTarget !== 'undefined') {
-        cameraPan.copy(cameraTarget);
-    }
+    cameraPan.copy(cameraTarget);
 }

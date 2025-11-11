@@ -3,9 +3,9 @@
 // ============================================
 
 // Calculate building properties automatically
-let buildingBounds = calculateBuildingBounds();
-let buildingCenter = buildingBounds.center;
-let buildingMaxSize = buildingBounds.maxSize;
+const buildingBounds = calculateBuildingBounds();
+const buildingCenter = buildingBounds.center;
+const buildingMaxSize = buildingBounds.maxSize;
 
 // Fullscreen Toggle Function
 function toggleFullscreen() {
@@ -77,12 +77,20 @@ function animate() {
 
     updateWalkMovement();
 
-    // ⭐ REMOVED structure rotation - camera rotates instead
-    // Structure stays at origin (0, 0, 0)
+    // Set structure position to building center so rotation happens around the center
+    structure.position.set(buildingCenter.x, buildingCenter.y, buildingCenter.z);
     
-    // Camera already looks at the rotation center in the interaction handlers
-    // No need to call camera.lookAt here
-    
+    // For Z-up coordinate system:
+    // rotation.z = rotation around vertical (Z) axis - controlled by horizontal mouse drag
+    // rotation.x = tilt rotation - controlled by vertical mouse drag  
+    structure.rotation.z += (targetRotationY - structure.rotation.z) * 0.1;
+    structure.rotation.x += (targetRotationX - structure.rotation.x) * 0.1;
+
+    cameraTarget.x = cameraPan.x;
+    cameraTarget.y = cameraPan.y;
+
+    camera.lookAt(cameraTarget);
+
     renderer.render(scene, camera);
 }
 
