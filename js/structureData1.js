@@ -23,204 +23,65 @@ const CROSS_SECTIONS = {
 const structuralData = {
     // Columns (start point, end point, cross-section, local rotation angle in degrees)
     columns: [
-        // Ground floor columns (Z: 0.25 to 3.8)
-        { id: 'C11', start: [0, 0, 0.25], end: [0, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C12', start: [0, 5, 0.25], end: [0, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C13', start: [0, 10, 0.25], end: [0, 10, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C14', start: [6, 0, 0.25], end: [6, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C15', start: [6, 5, 0.25], end: [6, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C16', start: [6, 10, 0.25], end: [6, 10, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C17', start: [12, 0, 0.25], end: [12, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C18', start: [12, 5, 0.25], end: [12, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C19', start: [12, 10, 0.25], end: [12, 10, 3.8], section: 'I_350x12x400x20', rotation: 0 },
-
-        // First floor columns (Z: 3.8 to 7.4)
-        { id: 'C21', start: [0, 0, 3.8], end: [0, 0, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C22', start: [0, 5, 3.8], end: [0, 5, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C23', start: [0, 10, 3.8], end: [0, 10, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C24', start: [6, 0, 3.8], end: [6, 0, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C25', start: [6, 5, 3.8], end: [6, 5, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C26', start: [6, 10, 3.8], end: [6, 10, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C27', start: [12, 0, 3.8], end: [12, 0, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C28', start: [12, 5, 3.8], end: [12, 5, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C29', start: [12, 10, 3.8], end: [12, 10, 7.4], section: 'I_350x12x400x20', rotation: 0 },
-
-        // Second floor columns (Z: 7.4 to 11.0)
-        { id: 'C31', start: [0, 0, 7.4], end: [0, 0, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C32', start: [0, 5, 7.4], end: [0, 5, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C33', start: [0, 10, 7.4], end: [0, 10, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C34', start: [6, 0, 7.4], end: [6, 0, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C35', start: [6, 5, 7.4], end: [6, 5, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C36', start: [6, 10, 7.4], end: [6, 10, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C37', start: [12, 0, 7.4], end: [12, 0, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C38', start: [12, 5, 7.4], end: [12, 5, 11.0], section: 'I_350x12x400x20', rotation: 0 },
-        { id: 'C39', start: [12, 10, 7.4], end: [12, 10, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: '56', start: [0, 0, 0.25], end: [0, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: '60', start: [0, 5, 0.25], end: [0, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: '64', start: [6, 0, 0.25], end: [6, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: '68', start: [6, 5, 0.25], end: [6, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
     ],
 
     // Beams (start point, end point, cross-section, local rotation angle in degrees)
     beams: [
-        // Ground floor beams (Z: 3.8)
-        // Along Y-direction
-        { id: 'B11', start: [0, 0, 3.8], end: [0, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B12', start: [0, 5, 3.8], end: [0, 10, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B13', start: [6, 0, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B14', start: [6, 5, 3.8], end: [6, 10, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B15', start: [12, 0, 3.8], end: [12, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B16', start: [12, 5, 3.8], end: [12, 10, 3.8], section: 'I_350x10x330x15', rotation: 0 },
-        // Along X-direction
-        { id: 'B17', start: [0, 0, 3.8], end: [6, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B18', start: [6, 0, 3.8], end: [12, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B19', start: [0, 5, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B110', start: [6, 5, 3.8], end: [12, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B111', start: [0, 10, 3.8], end: [6, 10, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B112', start: [6, 10, 3.8], end: [12, 10, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-
-        // First floor beams (Z: 7.4)
-        // Along Y-direction
-        { id: 'B21', start: [0, 0, 7.4], end: [0, 5, 7.4], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B22', start: [0, 5, 7.4], end: [0, 10, 7.4], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B23', start: [6, 0, 7.4], end: [6, 5, 7.4], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B24', start: [6, 5, 7.4], end: [6, 10, 7.4], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B25', start: [12, 0, 7.4], end: [12, 5, 7.4], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B26', start: [12, 5, 7.4], end: [12, 10, 7.4], section: 'I_350x10x330x15', rotation: 0 },
-        // Along X-direction
-        { id: 'B27', start: [0, 0, 7.4], end: [6, 0, 7.4], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B28', start: [6, 0, 7.4], end: [12, 0, 7.4], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B29', start: [0, 5, 7.4], end: [6, 5, 7.4], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B210', start: [6, 5, 7.4], end: [12, 5, 7.4], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B211', start: [0, 10, 7.4], end: [6, 10, 7.4], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B212', start: [6, 10, 7.4], end: [12, 10, 7.4], section: 'I_350x10x330x15', rotation: 90 },
-
-        // Second floor beams (Z: 11.0)
-        // Along Y-direction
-        { id: 'B31', start: [0, 0, 11.0], end: [0, 5, 11.0], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B32', start: [0, 5, 11.0], end: [0, 10, 11.0], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B33', start: [6, 0, 11.0], end: [6, 5, 11.0], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B34', start: [6, 5, 11.0], end: [6, 10, 11.0], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B35', start: [12, 0, 11.0], end: [12, 5, 11.0], section: 'I_350x10x330x15', rotation: 0 },
-        { id: 'B36', start: [12, 5, 11.0], end: [12, 10, 11.0], section: 'I_350x10x330x15', rotation: 0 },
-        // Along X-direction
-        { id: 'B37', start: [0, 0, 11.0], end: [6, 0, 11.0], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B38', start: [6, 0, 11.0], end: [12, 0, 11.0], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B39', start: [0, 5, 11.0], end: [6, 5, 11.0], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B310', start: [6, 5, 11.0], end: [12, 5, 11.0], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B311', start: [0, 10, 11.0], end: [6, 10, 11.0], section: 'I_350x10x330x15', rotation: 90 },
-        { id: 'B312', start: [6, 10, 11.0], end: [12, 10, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+        { id: '5', start: [0, 5, 3.8], end: [0, 0, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: '6', start: [0, 0, 3.8], end: [6, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: '7', start: [6, 0, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: '8', start: [6, 5, 3.8], end: [0, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        
     ],
 
     // Braces (start point, end point, cross-section, local rotation angle in degrees)
     braces: [ 
-        // Ground floor braces
-        { id: 'BR11', start: [0, 0, 0.25], end: [6, 5, 3.8], section: 'CIRCULAR_100', rotation: 0 },
-        { id: 'BR12', start: [6, 5, 0.25], end: [12, 10, 3.8], section: 'CIRCULAR_100', rotation: 0 },
-        
-        // First floor braces
-        { id: 'BR21', start: [0, 0, 3.8], end: [6, 5, 7.4], section: 'CIRCULAR_100', rotation: 0 },
-        { id: 'BR22', start: [6, 5, 3.8], end: [12, 10, 7.4], section: 'CIRCULAR_100', rotation: 0 },
-        
-        // Second floor braces
-        { id: 'BR31', start: [0, 0, 7.4], end: [6, 5, 11.0], section: 'CIRCULAR_100', rotation: 0 },
-        { id: 'BR32', start: [6, 5, 7.4], end: [12, 10, 11.0], section: 'CIRCULAR_100', rotation: 0 },
-    ],
+    { id: '155', start: [0, 0, .25], end: [6, 5, 3.8], section: 'CIRCULAR_100', rotation: 0 },
+],
 
     // Slabs (defined by corner points)
-    slabs: [
-        // Ground floor slab
-        { 
-            id: 'SLAB1', 
-            points: [
-                [0, 0, 3.8],
-                [12, 0, 3.8],
-                [12, 10, 3.8],
-                [0, 10, 3.8]
-            ], 
-            thickness: 0.2
-        },
-        // First floor slab
-        { 
-            id: 'SLAB2', 
-            points: [
-                [0, 0, 7.4],
-                [12, 0, 7.4],
-                [12, 10, 7.4],
-                [0, 10, 7.4]
-            ], 
-            thickness: 0.2
-        },
-        // Second floor slab (roof)
-        { 
-            id: 'SLAB3', 
-            points: [
-                [0, 0, 11.0],
-                [12, 0, 11.0],
-                [12, 10, 11.0],
-                [0, 10, 11.0]
-            ], 
-            thickness: 0.2
-        }
-    ],
+// Slabs (defined by corner points)
+slabs: [
+    { 
+        id: 'SLAB1', 
+        points: [
+            [0, 0, 3.8],    // Bottom-left corner
+            [6, 0, 3.8],    // Bottom-right corner
+            [6, 5, 3.8],    // Top-right corner
+            [0, 5, 3.8]     // Top-left corner
+        ], 
+        thickness: 0.2      // 200mm thick slab
+    }
+],
 
-    // Walls (defined by corner points, with thickness)
-    walls: [
-        // Front wall (Y=0)
-        { 
-            id: 'WALL1', 
-            points: [
-                [0, 0, 0.25],
-                [12, 0, 0.25],
-                [12, 0, 11.0],
-                [0, 0, 11.0]
-            ], 
-            thickness: 0.15
-        },
-        // Back wall (Y=10)
-        { 
-            id: 'WALL2', 
-            points: [
-                [0, 10, 0.25],
-                [12, 10, 0.25],
-                [12, 10, 11.0],
-                [0, 10, 11.0]
-            ], 
-            thickness: 0.15
-        },
-        // Left wall (X=0)
-        { 
-            id: 'WALL3', 
-            points: [
-                [0, 0, 0.25],
-                [0, 10, 0.25],
-                [0, 10, 11.0],
-                [0, 0, 11.0]
-            ], 
-            thickness: 0.15
-        },
-        // Right wall (X=12)
-        { 
-            id: 'WALL4', 
-            points: [
-                [12, 0, 0.25],
-                [12, 10, 0.25],
-                [12, 10, 11.0],
-                [12, 0, 11.0]
-            ], 
-            thickness: 0.15
-        }
-    ],
+// Walls (defined by corner points, with thickness)
+walls: [
+    { 
+        id: 'WALL1', 
+        points: [
+            [0, 0, 0.25],   // Bottom-left at foundation level
+            [6, 0, 0.25],   // Bottom-right at foundation level
+            [6, 0, 3.8],    // Top-right at roof level
+            [0, 0, 3.8]     // Top-left at roof level
+        ], 
+        thickness: 0.15     // 150mm thick wall
+    }
+],
+
 
     // Supports (point location, type: 'fixed', 'pinned', 'roller')
     supports: [
-        { id: 'SUP1', location: [0, 0, 0.25], type: 'pinned' },
-        { id: 'SUP2', location: [0, 5, 0.25], type: 'fixed' },
-        { id: 'SUP3', location: [0, 10, 0.25], type: 'pinned' },
-        { id: 'SUP4', location: [6, 0, 0.25], type: 'roller' },
-        { id: 'SUP5', location: [6, 5, 0.25], type: 'pinned' },
-        { id: 'SUP6', location: [6, 10, 0.25], type: 'roller' },
-        { id: 'SUP7', location: [12, 0, 0.25], type: 'pinned' },
-        { id: 'SUP8', location: [12, 5, 0.25], type: 'fixed' },
-        { id: 'SUP9', location: [12, 10, 0.25], type: 'pinned' },
+        { id: 'SUP1', location: [0.000, 0.000, 0.250], type: 'pinned' },
+        { id: 'SUP2', location: [0.000, 5.000, 0.250], type: 'fixed' },
+        { id: 'SUP3', location: [6.000, 0.000, 0.250], type: 'roller' },
+        { id: 'SUP4', location: [6.000, 5.000, 0.250], type: 'pinned' },
     ]
 };
+
 
 // ============================================
 // CROSS-SECTION GEOMETRY CREATION
@@ -552,7 +413,7 @@ function createSlab(slabData) {
     const material = new THREE.MeshPhongMaterial({
         color: ELEMENT_COLORS.SLAB,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.6,
         shininess: 30
     });
 
@@ -587,7 +448,7 @@ function createWall(wallData) {
     const material = new THREE.MeshPhongMaterial({
         color: ELEMENT_COLORS.WALL,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.4,
         side: THREE.DoubleSide,
         shininess: 20
     });
