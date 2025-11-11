@@ -19,222 +19,208 @@ const CROSS_SECTIONS = {
     CIRCULAR_100: { type: 'circular', diameter: 0.1 }, 
 };
 
-// Building configuration
-const BUILDING_CONFIG = {
-    baysX: 6,           // 6 bays in X direction
-    baysY: 3,           // 3 bays in Y direction
-    stories: 5,         // 5 stories
-    bayWidthX: 6,       // 6m bay width in X
-    bayWidthY: 5,       // 5m bay width in Y
-    storyHeight: 3.55,  // 3.55m story height
-    foundationHeight: 0.25
-};
+// Structural elements data
+const structuralData = {
+    // Columns (start point, end point, cross-section, local rotation angle in degrees)
+    columns: [
+        // Ground floor columns (Z: 0.25 to 3.8)
+        { id: 'C11', start: [0, 0, 0.25], end: [0, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C12', start: [0, 5, 0.25], end: [0, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C13', start: [0, 10, 0.25], end: [0, 10, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C14', start: [6, 0, 0.25], end: [6, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C15', start: [6, 5, 0.25], end: [6, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C16', start: [6, 10, 0.25], end: [6, 10, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C17', start: [12, 0, 0.25], end: [12, 0, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C18', start: [12, 5, 0.25], end: [12, 5, 3.8], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C19', start: [12, 10, 0.25], end: [12, 10, 3.8], section: 'I_350x12x400x20', rotation: 0 },
 
-// Generate grid coordinates
-function generateGridCoordinates() {
-    const coords = {
-        x: [],
-        y: [],
-        z: []
-    };
-    
-    // X coordinates (7 lines for 6 bays)
-    for (let i = 0; i <= BUILDING_CONFIG.baysX; i++) {
-        coords.x.push(i * BUILDING_CONFIG.bayWidthX);
-    }
-    
-    // Y coordinates (4 lines for 3 bays)
-    for (let i = 0; i <= BUILDING_CONFIG.baysY; i++) {
-        coords.y.push(i * BUILDING_CONFIG.bayWidthY);
-    }
-    
-    // Z coordinates (foundation + 5 floor levels)
-    coords.z.push(BUILDING_CONFIG.foundationHeight); // Foundation
-    for (let i = 1; i <= BUILDING_CONFIG.stories; i++) {
-        coords.z.push(BUILDING_CONFIG.foundationHeight + i * BUILDING_CONFIG.storyHeight);
-    }
-    
-    return coords;
-}
+        // First floor columns (Z: 3.8 to 7.4)
+        { id: 'C21', start: [0, 0, 3.8], end: [0, 0, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C22', start: [0, 5, 3.8], end: [0, 5, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C23', start: [0, 10, 3.8], end: [0, 10, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C24', start: [6, 0, 3.8], end: [6, 0, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C25', start: [6, 5, 3.8], end: [6, 5, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C26', start: [6, 10, 3.8], end: [6, 10, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C27', start: [12, 0, 3.8], end: [12, 0, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C28', start: [12, 5, 3.8], end: [12, 5, 7.4], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C29', start: [12, 10, 3.8], end: [12, 10, 7.4], section: 'I_350x12x400x20', rotation: 0 },
 
-const gridCoords = generateGridCoordinates();
+        // Second floor columns (Z: 7.4 to 11.0)
+        { id: 'C31', start: [0, 0, 7.4], end: [0, 0, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C32', start: [0, 5, 7.4], end: [0, 5, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C33', start: [0, 10, 7.4], end: [0, 10, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C34', start: [6, 0, 7.4], end: [6, 0, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C35', start: [6, 5, 7.4], end: [6, 5, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C36', start: [6, 10, 7.4], end: [6, 10, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C37', start: [12, 0, 7.4], end: [12, 0, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C38', start: [12, 5, 7.4], end: [12, 5, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+        { id: 'C39', start: [12, 10, 7.4], end: [12, 10, 11.0], section: 'I_350x12x400x20', rotation: 0 },
+    ],
 
-// Generate structural data programmatically
-function generateStructuralData() {
-    const data = {
-        columns: [],
-        beams: [],
-        braces: [],
-        slabs: [],
-        walls: [],
-        supports: []
-    };
-    
-    // Generate columns
-    let columnId = 1;
-    for (let story = 0; story < BUILDING_CONFIG.stories; story++) {
-        for (let i = 0; i <= BUILDING_CONFIG.baysX; i++) {
-            for (let j = 0; j <= BUILDING_CONFIG.baysY; j++) {
-                data.columns.push({
-                    id: `C${columnId}`,
-                    start: [gridCoords.x[i], gridCoords.y[j], gridCoords.z[story]],
-                    end: [gridCoords.x[i], gridCoords.y[j], gridCoords.z[story + 1]],
-                    section: 'I_350x12x400x20',
-                    rotation: 0
-                });
-                columnId++;
-            }
-        }
-    }
-    
-    // Generate beams
-    let beamId = 1;
-    for (let story = 1; story <= BUILDING_CONFIG.stories; story++) {
-        const z = gridCoords.z[story];
+    // Beams (start point, end point, cross-section, local rotation angle in degrees)
+    beams: [
+        // Ground floor beams (Z: 3.8)
+        // Along Y-direction
+        { id: 'B11', start: [0, 0, 3.8], end: [0, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B12', start: [0, 5, 3.8], end: [0, 10, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B13', start: [6, 0, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B14', start: [6, 5, 3.8], end: [6, 10, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B15', start: [12, 0, 3.8], end: [12, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B16', start: [12, 5, 3.8], end: [12, 10, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        // Along X-direction
+        { id: 'B17', start: [0, 0, 3.8], end: [6, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B18', start: [6, 0, 3.8], end: [12, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B19', start: [0, 5, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B110', start: [6, 5, 3.8], end: [12, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B111', start: [0, 10, 3.8], end: [6, 10, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B112', start: [6, 10, 3.8], end: [12, 10, 3.8], section: 'I_350x10x330x15', rotation: 90 },
+
+        // First floor beams (Z: 7.4)
+        // Along Y-direction
+        { id: 'B21', start: [0, 0, 7.4], end: [0, 5, 7.4], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B22', start: [0, 5, 7.4], end: [0, 10, 7.4], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B23', start: [6, 0, 7.4], end: [6, 5, 7.4], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B24', start: [6, 5, 7.4], end: [6, 10, 7.4], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B25', start: [12, 0, 7.4], end: [12, 5, 7.4], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B26', start: [12, 5, 7.4], end: [12, 10, 7.4], section: 'I_350x10x330x15', rotation: 0 },
+        // Along X-direction
+        { id: 'B27', start: [0, 0, 7.4], end: [6, 0, 7.4], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B28', start: [6, 0, 7.4], end: [12, 0, 7.4], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B29', start: [0, 5, 7.4], end: [6, 5, 7.4], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B210', start: [6, 5, 7.4], end: [12, 5, 7.4], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B211', start: [0, 10, 7.4], end: [6, 10, 7.4], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B212', start: [6, 10, 7.4], end: [12, 10, 7.4], section: 'I_350x10x330x15', rotation: 90 },
+
+        // Second floor beams (Z: 11.0)
+        // Along Y-direction
+        { id: 'B31', start: [0, 0, 11.0], end: [0, 5, 11.0], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B32', start: [0, 5, 11.0], end: [0, 10, 11.0], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B33', start: [6, 0, 11.0], end: [6, 5, 11.0], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B34', start: [6, 5, 11.0], end: [6, 10, 11.0], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B35', start: [12, 0, 11.0], end: [12, 5, 11.0], section: 'I_350x10x330x15', rotation: 0 },
+        { id: 'B36', start: [12, 5, 11.0], end: [12, 10, 11.0], section: 'I_350x10x330x15', rotation: 0 },
+        // Along X-direction
+        { id: 'B37', start: [0, 0, 11.0], end: [6, 0, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B38', start: [6, 0, 11.0], end: [12, 0, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B39', start: [0, 5, 11.0], end: [6, 5, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B310', start: [6, 5, 11.0], end: [12, 5, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B311', start: [0, 10, 11.0], end: [6, 10, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+        { id: 'B312', start: [6, 10, 11.0], end: [12, 10, 11.0], section: 'I_350x10x330x15', rotation: 90 },
+    ],
+
+    // Braces (start point, end point, cross-section, local rotation angle in degrees)
+    braces: [ 
+        // Ground floor braces
+        { id: 'BR11', start: [0, 0, 0.25], end: [6, 5, 3.8], section: 'CIRCULAR_100', rotation: 0 },
+        { id: 'BR12', start: [6, 5, 0.25], end: [12, 10, 3.8], section: 'CIRCULAR_100', rotation: 0 },
         
-        // Beams along Y direction (parallel to Y-axis)
-        for (let i = 0; i <= BUILDING_CONFIG.baysX; i++) {
-            for (let j = 0; j < BUILDING_CONFIG.baysY; j++) {
-                data.beams.push({
-                    id: `B${beamId}`,
-                    start: [gridCoords.x[i], gridCoords.y[j], z],
-                    end: [gridCoords.x[i], gridCoords.y[j + 1], z],
-                    section: 'I_350x10x330x15',
-                    rotation: 0
-                });
-                beamId++;
-            }
-        }
+        // First floor braces
+        { id: 'BR21', start: [0, 0, 3.8], end: [6, 5, 7.4], section: 'CIRCULAR_100', rotation: 0 },
+        { id: 'BR22', start: [6, 5, 3.8], end: [12, 10, 7.4], section: 'CIRCULAR_100', rotation: 0 },
         
-        // Beams along X direction (parallel to X-axis)
-        for (let j = 0; j <= BUILDING_CONFIG.baysY; j++) {
-            for (let i = 0; i < BUILDING_CONFIG.baysX; i++) {
-                data.beams.push({
-                    id: `B${beamId}`,
-                    start: [gridCoords.x[i], gridCoords.y[j], z],
-                    end: [gridCoords.x[i + 1], gridCoords.y[j], z],
-                    section: 'I_350x10x330x15',
-                    rotation: 90
-                });
-                beamId++;
-            }
-        }
-    }
-    
-    // Generate braces (diagonal bracing in selected bays)
-    let braceId = 1;
-    for (let story = 0; story < BUILDING_CONFIG.stories; story++) {
-        // Add braces in first and last bays
-        // Front-left bay
-        data.braces.push({
-            id: `BR${braceId}`,
-            start: [gridCoords.x[0], gridCoords.y[0], gridCoords.z[story]],
-            end: [gridCoords.x[1], gridCoords.y[1], gridCoords.z[story + 1]],
-            section: 'CIRCULAR_100',
-            rotation: 0
-        });
-        braceId++;
-        
-        // Front-right bay
-        data.braces.push({
-            id: `BR${braceId}`,
-            start: [gridCoords.x[BUILDING_CONFIG.baysX - 1], gridCoords.y[0], gridCoords.z[story]],
-            end: [gridCoords.x[BUILDING_CONFIG.baysX], gridCoords.y[1], gridCoords.z[story + 1]],
-            section: 'CIRCULAR_100',
-            rotation: 0
-        });
-        braceId++;
-    }
-    
-    // Generate slabs
-    for (let story = 1; story <= BUILDING_CONFIG.stories; story++) {
-        const z = gridCoords.z[story];
-        data.slabs.push({
-            id: `SLAB${story}`,
+        // Second floor braces
+        { id: 'BR31', start: [0, 0, 7.4], end: [6, 5, 11.0], section: 'CIRCULAR_100', rotation: 0 },
+        { id: 'BR32', start: [6, 5, 7.4], end: [12, 10, 11.0], section: 'CIRCULAR_100', rotation: 0 },
+    ],
+
+    // Slabs (defined by corner points)
+    slabs: [
+        // Ground floor slab
+        { 
+            id: 'SLAB1', 
             points: [
-                [gridCoords.x[0], gridCoords.y[0], z],
-                [gridCoords.x[BUILDING_CONFIG.baysX], gridCoords.y[0], z],
-                [gridCoords.x[BUILDING_CONFIG.baysX], gridCoords.y[BUILDING_CONFIG.baysY], z],
-                [gridCoords.x[0], gridCoords.y[BUILDING_CONFIG.baysY], z]
-            ],
+                [0, 0, 3.8],
+                [12, 0, 3.8],
+                [12, 10, 3.8],
+                [0, 10, 3.8]
+            ], 
             thickness: 0.2
-        });
-    }
-    
-    // Generate walls
-    const maxX = gridCoords.x[BUILDING_CONFIG.baysX];
-    const maxY = gridCoords.y[BUILDING_CONFIG.baysY];
-    const maxZ = gridCoords.z[BUILDING_CONFIG.stories];
-    const minZ = gridCoords.z[0];
-    
-    // Front wall (Y=0)
-    data.walls.push({
-        id: 'WALL1',
-        points: [
-            [0, 0, minZ],
-            [maxX, 0, minZ],
-            [maxX, 0, maxZ],
-            [0, 0, maxZ]
-        ],
-        thickness: 0.15
-    });
-    
-    // Back wall (Y=max)
-    data.walls.push({
-        id: 'WALL2',
-        points: [
-            [0, maxY, minZ],
-            [maxX, maxY, minZ],
-            [maxX, maxY, maxZ],
-            [0, maxY, maxZ]
-        ],
-        thickness: 0.15
-    });
-    
-    // Left wall (X=0)
-    data.walls.push({
-        id: 'WALL3',
-        points: [
-            [0, 0, minZ],
-            [0, maxY, minZ],
-            [0, maxY, maxZ],
-            [0, 0, maxZ]
-        ],
-        thickness: 0.15
-    });
-    
-    // Right wall (X=max)
-    data.walls.push({
-        id: 'WALL4',
-        points: [
-            [maxX, 0, minZ],
-            [maxX, maxY, minZ],
-            [maxX, maxY, maxZ],
-            [maxX, 0, maxZ]
-        ],
-        thickness: 0.15
-    });
-    
-    // Generate supports (at foundation level)
-    let supportId = 1;
-    const supportTypes = ['pinned', 'fixed', 'roller'];
-    for (let i = 0; i <= BUILDING_CONFIG.baysX; i++) {
-        for (let j = 0; j <= BUILDING_CONFIG.baysY; j++) {
-            // Alternate support types for variety
-            const typeIndex = (i + j) % 3;
-            data.supports.push({
-                id: `SUP${supportId}`,
-                location: [gridCoords.x[i], gridCoords.y[j], gridCoords.z[0]],
-                type: supportTypes[typeIndex]
-            });
-            supportId++;
+        },
+        // First floor slab
+        { 
+            id: 'SLAB2', 
+            points: [
+                [0, 0, 7.4],
+                [12, 0, 7.4],
+                [12, 10, 7.4],
+                [0, 10, 7.4]
+            ], 
+            thickness: 0.2
+        },
+        // Second floor slab (roof)
+        { 
+            id: 'SLAB3', 
+            points: [
+                [0, 0, 11.0],
+                [12, 0, 11.0],
+                [12, 10, 11.0],
+                [0, 10, 11.0]
+            ], 
+            thickness: 0.2
         }
-    }
-    
-    return data;
-}
+    ],
 
-const structuralData = generateStructuralData();
+    // Walls (defined by corner points, with thickness)
+    walls: [
+        // Front wall (Y=0)
+        { 
+            id: 'WALL1', 
+            points: [
+                [0, 0, 0.25],
+                [12, 0, 0.25],
+                [12, 0, 11.0],
+                [0, 0, 11.0]
+            ], 
+            thickness: 0.15
+        },
+        // Back wall (Y=10)
+        { 
+            id: 'WALL2', 
+            points: [
+                [0, 10, 0.25],
+                [12, 10, 0.25],
+                [12, 10, 11.0],
+                [0, 10, 11.0]
+            ], 
+            thickness: 0.15
+        },
+        // Left wall (X=0)
+        { 
+            id: 'WALL3', 
+            points: [
+                [0, 0, 0.25],
+                [0, 10, 0.25],
+                [0, 10, 11.0],
+                [0, 0, 11.0]
+            ], 
+            thickness: 0.15
+        },
+        // Right wall (X=12)
+        { 
+            id: 'WALL4', 
+            points: [
+                [12, 0, 0.25],
+                [12, 10, 0.25],
+                [12, 10, 11.0],
+                [12, 0, 11.0]
+            ], 
+            thickness: 0.15
+        }
+    ],
+
+    // Supports (point location, type: 'fixed', 'pinned', 'roller')
+    supports: [
+        { id: 'SUP1', location: [0, 0, 0.25], type: 'pinned' },
+        { id: 'SUP2', location: [0, 5, 0.25], type: 'fixed' },
+        { id: 'SUP3', location: [0, 10, 0.25], type: 'pinned' },
+        { id: 'SUP4', location: [6, 0, 0.25], type: 'roller' },
+        { id: 'SUP5', location: [6, 5, 0.25], type: 'pinned' },
+        { id: 'SUP6', location: [6, 10, 0.25], type: 'roller' },
+        { id: 'SUP7', location: [12, 0, 0.25], type: 'pinned' },
+        { id: 'SUP8', location: [12, 5, 0.25], type: 'fixed' },
+        { id: 'SUP9', location: [12, 10, 0.25], type: 'pinned' },
+    ]
+};
 
 // ============================================
 // CROSS-SECTION GEOMETRY CREATION
@@ -365,7 +351,7 @@ function createStructureFromData() {
     structure = new THREE.Group();
 
     // Create grid perpendicular to Z axis (horizontal plane in XY)
-    const gridSize = Math.max(buildingBounds.size.x, buildingBounds.size.y) * 1.5;
+    const gridSize = Math.max(buildingBounds.size.x, buildingBounds.size.y) * 2;
     const gridDivisions = Math.ceil(gridSize / 2);
     const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x888888, 0xcccccc);
     
@@ -438,7 +424,7 @@ function createColumn(columnData) {
     const column = new THREE.Mesh(geometry, material);
     column.position.copy(midpoint);
 
-    // Align column with direction vector
+    // Align column with direction vector (columns are vertical, so align with Y-axis by default)
     if (section.type === 'circular') {
         const quaternion = new THREE.Quaternion();
         quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
@@ -450,7 +436,7 @@ function createColumn(columnData) {
         column.setRotationFromQuaternion(quaternion);
     }
 
-    // Apply local rotation around the longitudinal axis
+    // Apply local rotation around the longitudinal axis (start to end direction)
     if (columnData.rotation !== 0) {
         const longitudinalAxis = direction.clone().normalize();
         column.rotateOnWorldAxis(longitudinalAxis, (columnData.rotation * Math.PI) / 180);
@@ -498,7 +484,7 @@ function createBeam(beamData) {
         beam.setRotationFromQuaternion(quaternion);
     }
 
-    // Apply local rotation around the longitudinal axis
+    // Apply local rotation around the longitudinal axis (start to end direction)
     if (beamData.rotation !== 0) {
         const longitudinalAxis = direction.clone().normalize();
         beam.rotateOnWorldAxis(longitudinalAxis, (beamData.rotation * Math.PI) / 180);
@@ -566,7 +552,7 @@ function createSlab(slabData) {
     const material = new THREE.MeshPhongMaterial({
         color: ELEMENT_COLORS.SLAB,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.5,
         shininess: 30
     });
 
@@ -601,7 +587,7 @@ function createWall(wallData) {
     const material = new THREE.MeshPhongMaterial({
         color: ELEMENT_COLORS.WALL,
         transparent: true,
-        opacity: 0.4,
+        opacity: 0.8,
         side: THREE.DoubleSide,
         shininess: 20
     });
