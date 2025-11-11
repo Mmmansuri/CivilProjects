@@ -396,16 +396,18 @@ function createBrace(braceData) {
 function createSlab(slabData) {
     const points = slabData.points.map(p => new THREE.Vector3(...p));
     
-    // Calculate dimensions
-    const width = points[1].distanceTo(points[0]);
-    const depth = points[2].distanceTo(points[1]);
+    // Calculate dimensions (slab is horizontal in XY plane)
+    const width = points[1].distanceTo(points[0]);  // X direction
+    const depth = points[2].distanceTo(points[1]);  // Y direction
     
     // Calculate center
     const center = new THREE.Vector3();
     points.forEach(p => center.add(p));
     center.divideScalar(points.length);
 
-    const geometry = new THREE.BoxGeometry(width, slabData.thickness, depth);
+    // BoxGeometry(width_X, height_Y, depth_Z)
+    // For horizontal slab: X-width, Y-depth, Z-thickness
+    const geometry = new THREE.BoxGeometry(width, depth, slabData.thickness);
     const material = new THREE.MeshPhongMaterial({
         color: ELEMENT_COLORS.SLAB,
         transparent: true,
@@ -422,21 +424,24 @@ function createSlab(slabData) {
 function createWall(wallData) {
     const points = wallData.points.map(p => new THREE.Vector3(...p));
     
-    // Calculate dimensions
-    const width = points[1].distanceTo(points[0]);
-    const height = points[2].y - points[0].y;
+    // Calculate dimensions (wall is vertical)
+    const horizontalDistance = points[1].distanceTo(points[0]);  // Horizontal span
+    const height = Math.abs(points[2].z - points[0].z);  // Vertical height (Z direction)
     
     // Calculate center
     const center = new THREE.Vector3();
     points.forEach(p => center.add(p));
     center.divideScalar(points.length);
 
-    // Determine orientation
+    // Determine orientation (which horizontal direction the wall runs)
     const isAlongX = Math.abs(points[1].x - points[0].x) > 0.01;
     
+    // BoxGeometry(width_X, height_Y, depth_Z)
+    // For vertical wall along X: X-length, Y-thickness, Z-height
+    // For vertical wall along Y: X-thickness, Y-length, Z-height
     const geometry = isAlongX ? 
-        new THREE.BoxGeometry(width, height, wallData.thickness) :
-        new THREE.BoxGeometry(wallData.thickness, height, width);
+        new THREE.BoxGeometry(horizontalDistance, wallData.thickness, height) :
+        new THREE.BoxGeometry(wallData.thickness, horizontalDistance, height);
 
     const material = new THREE.MeshPhongMaterial({
         color: ELEMENT_COLORS.WALL,
