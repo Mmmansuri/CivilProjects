@@ -9,6 +9,8 @@ let cameraTarget, cameraPan;
 
 // New variable for dynamic rotation center
 let rotationCenter = new THREE.Vector3();
+let dragStartX = 0, dragStartY = 0;
+let rotationAxisLocked = null;
 
 let keys = {};
 let moveSpeed = 0.3;
@@ -18,6 +20,7 @@ function onMouseDown(e) {
     if (e.button === 0) {
         isDragging = true;
         isPanning = false;
+        rotationAxisLocked = null; // Reset axis lock
         
         // Raycast to find the 3D point where user clicked
         const rect = renderer.domElement.getBoundingClientRect();
@@ -42,6 +45,11 @@ function onMouseDown(e) {
                 raycaster.ray.direction.multiplyScalar(defaultDistance)
             );
         }
+        
+        // Store initial drag position
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        
     } else if (e.button === 2) {
         isPanning = true;
         isDragging = false;
@@ -55,47 +63,80 @@ function onMouseMove(e) {
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
         
-        const rotationSpeed = 0.005;
-        
-        // Determine which axis to rotate around based on modifier keys
-        let rotationAxis;
-        let angle;
-        
-        if (keys['shift']) {
-            // Shift + drag: Rotate around X-axis (horizontal axis along X)
-            rotationAxis = new THREE.Vector3(1, 0, 0);
-            angle = -deltaY * rotationSpeed;
-        } else if (keys['control'] || keys['ctrl']) {
-            // Ctrl + drag: Rotate around Y-axis (horizontal axis along Y)
-            rotationAxis = new THREE.Vector3(0, 1, 0);
-            angle = -deltaY * rotationSpeed;
-        } else {
-            // Default (no modifier): Rotate around Z-axis (vertical)
-            rotationAxis = new THREE.Vector3(0, 0, 1);
-            angle = deltaX * rotationSpeed;
+        // If axis not locked yet, determine which axis to use based on initial movement
+        if (rotationAxisLocked === null) {
+            const totalDeltaX = Math.abs(e.clientX - dragStartX);
+            const totalDeltaY = Math.abs(e.clientY - dragStartY);
+            
+            // Need minimum movement to lock axis (prevents jitter)
+            const threshold = 5;
+            if (totalDeltaX > threshold || totalDeltaY > threshold) {
+                if (totalDeltaX > totalDeltaY) {
+                    // Horizontal movement dominates - rotate around Z axis (vertical)
+                    rotationAxisLocked = 'Z';
+                } else {
+                    // Vertical movement dominates - determine X or Y based on camera angle
+                    const cameraDirection = new THREE.Vector3();
+                    camera.getWorldDirection(cameraDirection);
+                    
+                    // Project camera direction onto XY plane
+                    const projectedDir = new THREE.Vector2(cameraDirection.x, cameraDirection.y).normalize();
+                    
+                    // Determine if camera is more aligned with X or Y axis
+                    if (Math.abs(projectedDir.x) > Math.abs(projectedDir.y)) {
+                        // Camera looking more along X, so rotate around Y
+                        rotationAxisLocked = 'Y';
+                    } else {
+                        // Camera looking more along Y, so rotate around X
+                        rotationAxisLocked = 'X';
+                    }
+                }
+            }
         }
         
-        // Get vector from rotation center to camera
-        const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
-        
-        // Create quaternion for rotation around the chosen axis
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle(rotationAxis, angle);
-        
-        // Apply rotation to offset
-        offset.applyQuaternion(quaternion);
-        
-        // Update camera position
-        camera.position.copy(rotationCenter).add(offset);
-        
-        // Make camera look at rotation center
-        camera.lookAt(rotationCenter);
-        
-        // Update camera target
-        cameraTarget.copy(rotationCenter);
+        // Apply rotation if axis is locked
+        if (rotationAxisLocked !== null) {
+            const rotationSpeed = 0.005;
+            let rotationAxis;
+            let angle;
+            
+            if (rotationAxisLocked === 'Z') {
+                // Rotate around Z-axis (vertical)
+                rotationAxis = new THREE.Vector3(0, 0, 1);
+                angle = deltaX * rotationSpeed;
+            } else if (rotationAxisLocked === 'X') {
+                // Rotate around X-axis
+                rotationAxis = new THREE.Vector3(1, 0, 0);
+                angle = -deltaY * rotationSpeed;
+            } else if (rotationAxisLocked === 'Y') {
+                // Rotate around Y-axis
+                rotationAxis = new THREE.Vector3(0, 1, 0);
+                angle = -deltaY * rotationSpeed;
+            }
+            
+            // Get vector from rotation center to camera
+            const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
+            
+            // Create quaternion for rotation around the chosen axis
+            const quaternion = new THREE.Quaternion();
+            quaternion.setFromAxisAngle(rotationAxis, angle);
+            
+            // Apply rotation to offset
+            offset.applyQuaternion(quaternion);
+            
+            // Update camera position
+            camera.position.copy(rotationCenter).add(offset);
+            
+            // Make camera look at rotation center
+            camera.lookAt(rotationCenter);
+            
+            // Update camera target
+            cameraTarget.copy(rotationCenter);
+        }
         
         mouseX = e.clientX;
         mouseY = e.clientY;
+        
     } else if (isPanning) {
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
@@ -131,6 +172,7 @@ function onMouseMove(e) {
 function onMouseUp() {
     isDragging = false;
     isPanning = false;
+    rotationAxisLocked = null; // Reset axis lock
 }
 
 function onWheel(e) {
@@ -171,21 +213,11 @@ function onKeyDown(e) {
         keys[keyLower] = true;
         keys[codeLower] = true;
     }
-    
-    // Track modifier keys
-    if (e.key === 'Shift') keys['shift'] = true;
-    if (e.key === 'Control') keys['control'] = true;
-    if (e.key === 'Meta') keys['ctrl'] = true; // For Mac Command key
 }
 
 function onKeyUp(e) {
     keys[e.key.toLowerCase()] = false;
     keys[e.code.toLowerCase()] = false;
-    
-    // Track modifier keys
-    if (e.key === 'Shift') keys['shift'] = false;
-    if (e.key === 'Control') keys['control'] = false;
-    if (e.key === 'Meta') keys['ctrl'] = false;
 }
 
 function updateWalkMovement() {
