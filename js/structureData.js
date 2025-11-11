@@ -16,6 +16,7 @@ const ELEMENT_COLORS = {
 const CROSS_SECTIONS = {
     I_350x12x400x20: { type: 'i-beam', height: 0.39, width: 0.4, webThickness: 0.012, flangeThickness: 0.02 },
     I_350x10x330x15: { type: 'i-beam', height: 0.38, width: 0.33, webThickness: 0.01, flangeThickness: 0.015 },
+    CIRCULAR_100: { type: 'circular', diameter: 0.1 }, 
 };
 
 // Structural elements data
@@ -34,11 +35,12 @@ const structuralData = {
         { id: '6', start: [0, 0, 3.8], end: [6, 0, 3.8], section: 'I_350x10x330x15', rotation: 90 },
         { id: '7', start: [6, 0, 3.8], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
         { id: '8', start: [6, 5, 3.8], end: [0, 5, 3.8], section: 'I_350x10x330x15', rotation: 90 },
-        { id: '17', start: [0, 0, .25], end: [6, 5, 3.8], section: 'I_350x10x330x15', rotation: 0 },
+        
     ],
 
     // Braces (start point, end point, cross-section, local rotation angle in degrees)
-    braces: [ ],
+    braces: [ { id: '17', start: [0, 0, .25], end: [6, 5, 3.8], section: 'circular', rotation: 0 },
+],
 
     // Slabs (defined by corner points)
 // Slabs (defined by corner points)
