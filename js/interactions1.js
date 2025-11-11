@@ -8,9 +8,6 @@ let isDragging = false;
 let isPanning = false;
 let cameraTarget, cameraPan;
 
-// New variable for dynamic rotation center
-let rotationCenter = new THREE.Vector3();
-
 let keys = {};
 let moveSpeed = 0.3;
 let canvasHasFocus = false;
@@ -19,30 +16,6 @@ function onMouseDown(e) {
     if (e.button === 0) {
         isDragging = true;
         isPanning = false;
-        
-        // Raycast to find the 3D point where user clicked
-        const rect = renderer.domElement.getBoundingClientRect();
-        const mouse = new THREE.Vector2(
-            ((e.clientX - rect.left) / rect.width) * 2 - 1,
-            -((e.clientY - rect.top) / rect.height) * 2 + 1
-        );
-        
-        const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
-        
-        // Check intersection with structure
-        const intersects = raycaster.intersectObjects(structure.children, true);
-        
-        if (intersects.length > 0) {
-            // Set rotation center to the clicked point
-            rotationCenter.copy(intersects[0].point);
-        } else {
-            // If no intersection, use a point at a default distance along the ray
-            const defaultDistance = 20; // Adjust based on your scene
-            rotationCenter.copy(camera.position).add(
-                raycaster.ray.direction.multiplyScalar(defaultDistance)
-            );
-        }
     } else if (e.button === 2) {
         isPanning = true;
         isDragging = false;
@@ -56,38 +29,9 @@ function onMouseMove(e) {
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
         
-        const rotationSpeed = 0.005;
-        
-        // Calculate rotation angles
-        const angleY = deltaX * rotationSpeed;  // Rotation around Z (vertical axis)
-        const angleX = -deltaY * rotationSpeed; // Rotation around horizontal axis
-        
-        // Get vector from rotation center to camera
-        const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
-        
-        // Rotate around Z-axis (vertical)
-        const quaternionY = new THREE.Quaternion();
-        quaternionY.setFromAxisAngle(new THREE.Vector3(0, 0, 1), angleY);
-        offset.applyQuaternion(quaternionY);
-        
-        // Calculate right vector for horizontal rotation (perpendicular to view direction and Z-axis)
-        const viewDirection = new THREE.Vector3().subVectors(rotationCenter, camera.position).normalize();
-        const rightVector = new THREE.Vector3();
-        rightVector.crossVectors(viewDirection, new THREE.Vector3(0, 0, 1)).normalize();
-        
-        // Rotate around right vector (horizontal tilt)
-        const quaternionX = new THREE.Quaternion();
-        quaternionX.setFromAxisAngle(rightVector, angleX);
-        offset.applyQuaternion(quaternionX);
-        
-        // Update camera position
-        camera.position.copy(rotationCenter).add(offset);
-        
-        // Make camera look at rotation center
-        camera.lookAt(rotationCenter);
-        
-        // Update camera target
-        cameraTarget.copy(rotationCenter);
+        // For Z-up: horizontal drag rotates around Z axis, vertical drag rotates around horizontal
+        targetRotationY += deltaX * 0.005;  // This will rotate around Z (vertical axis)
+        targetRotationX -= deltaY * 0.005;  // This will tilt around horizontal axis
         
         mouseX = e.clientX;
         mouseY = e.clientY;
