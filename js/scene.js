@@ -22,7 +22,7 @@ function init() {
     camera.up.set(0, 0, 1);
     
     // Auto-position camera based on building size
-    const cameraDistance = buildingMaxSize * 3.5;
+    const cameraDistance = buildingMaxSize * 2;
     camera.position.set(
         buildingCenter.x + cameraDistance * 0.8,
         buildingCenter.y + cameraDistance * 0.5,

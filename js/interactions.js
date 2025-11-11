@@ -1,9 +1,8 @@
 // ============================================
-// INTERACTION HANDLERS (FIXED FOR Z-UP)
+// INTERACTION HANDLERS (ROTATION AROUND MAJOR AXES)
 // ============================================
 
 let mouseX = 0, mouseY = 0;
-let targetRotationX = 0, targetRotationY = 0;
 let isDragging = false;
 let isPanning = false;
 let cameraTarget, cameraPan;
@@ -58,27 +57,33 @@ function onMouseMove(e) {
         
         const rotationSpeed = 0.005;
         
-        // Calculate rotation angles
-        const angleY = deltaX * rotationSpeed;  // Rotation around Z (vertical axis)
-        const angleX = -deltaY * rotationSpeed; // Rotation around horizontal axis
+        // Determine which axis to rotate around based on modifier keys
+        let rotationAxis;
+        let angle;
+        
+        if (keys['shift']) {
+            // Shift + drag: Rotate around X-axis (horizontal axis along X)
+            rotationAxis = new THREE.Vector3(1, 0, 0);
+            angle = -deltaY * rotationSpeed;
+        } else if (keys['control'] || keys['ctrl']) {
+            // Ctrl + drag: Rotate around Y-axis (horizontal axis along Y)
+            rotationAxis = new THREE.Vector3(0, 1, 0);
+            angle = -deltaY * rotationSpeed;
+        } else {
+            // Default (no modifier): Rotate around Z-axis (vertical)
+            rotationAxis = new THREE.Vector3(0, 0, 1);
+            angle = deltaX * rotationSpeed;
+        }
         
         // Get vector from rotation center to camera
         const offset = new THREE.Vector3().subVectors(camera.position, rotationCenter);
         
-        // Rotate around Z-axis (vertical)
-        const quaternionY = new THREE.Quaternion();
-        quaternionY.setFromAxisAngle(new THREE.Vector3(0, 0, 1), angleY);
-        offset.applyQuaternion(quaternionY);
+        // Create quaternion for rotation around the chosen axis
+        const quaternion = new THREE.Quaternion();
+        quaternion.setFromAxisAngle(rotationAxis, angle);
         
-        // Calculate right vector for horizontal rotation (perpendicular to view direction and Z-axis)
-        const viewDirection = new THREE.Vector3().subVectors(rotationCenter, camera.position).normalize();
-        const rightVector = new THREE.Vector3();
-        rightVector.crossVectors(viewDirection, new THREE.Vector3(0, 0, 1)).normalize();
-        
-        // Rotate around right vector (horizontal tilt)
-        const quaternionX = new THREE.Quaternion();
-        quaternionX.setFromAxisAngle(rightVector, angleX);
-        offset.applyQuaternion(quaternionX);
+        // Apply rotation to offset
+        offset.applyQuaternion(quaternion);
         
         // Update camera position
         camera.position.copy(rotationCenter).add(offset);
@@ -166,11 +171,21 @@ function onKeyDown(e) {
         keys[keyLower] = true;
         keys[codeLower] = true;
     }
+    
+    // Track modifier keys
+    if (e.key === 'Shift') keys['shift'] = true;
+    if (e.key === 'Control') keys['control'] = true;
+    if (e.key === 'Meta') keys['ctrl'] = true; // For Mac Command key
 }
 
 function onKeyUp(e) {
     keys[e.key.toLowerCase()] = false;
     keys[e.code.toLowerCase()] = false;
+    
+    // Track modifier keys
+    if (e.key === 'Shift') keys['shift'] = false;
+    if (e.key === 'Control') keys['control'] = false;
+    if (e.key === 'Meta') keys['ctrl'] = false;
 }
 
 function updateWalkMovement() {
