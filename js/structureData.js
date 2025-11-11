@@ -42,10 +42,34 @@ const structuralData = {
 ],
 
     // Slabs (defined by corner points)
-    slabs: [],
+// Slabs (defined by corner points)
+slabs: [
+    { 
+        id: 'SLAB1', 
+        points: [
+            [0, 0, 3.8],    // Bottom-left corner
+            [6, 0, 3.8],    // Bottom-right corner
+            [6, 5, 3.8],    // Top-right corner
+            [0, 5, 3.8]     // Top-left corner
+        ], 
+        thickness: 0.2      // 200mm thick slab
+    }
+],
 
-    // Walls (defined by corner points, with thickness)
-    walls: [],
+// Walls (defined by corner points, with thickness)
+walls: [
+    { 
+        id: 'WALL1', 
+        points: [
+            [0, 0, 0.25],   // Bottom-left at foundation level
+            [6, 0, 0.25],   // Bottom-right at foundation level
+            [6, 0, 3.8],    // Top-right at roof level
+            [0, 0, 3.8]     // Top-left at roof level
+        ], 
+        thickness: 0.15     // 150mm thick wall
+    }
+],
+
 
     // Supports (point location, type: 'fixed', 'pinned', 'roller')
     supports: [
