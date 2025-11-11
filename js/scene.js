@@ -15,7 +15,7 @@ function init() {
         50,
         container.clientWidth / container.clientHeight,
         1,
-        buildingMaxSize * 10
+        buildingMaxSize * 30
     );
     
     // Set Z as up axis (vertical)
