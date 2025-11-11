@@ -7,13 +7,27 @@ let isDragging = false;
 let isPanning = false;
 let cameraTarget, cameraPan;
 
-// Rotation center
-let rotationCenter = new THREE.Vector3();
+// Rotation center - initialize with a default value
+let rotationCenter = new THREE.Vector3(0, 0, 0);
 let cameraDistance = 50;
 
 let keys = {};
 let moveSpeed = 0.3;
 let canvasHasFocus = false;
+
+// Helper function to get building center (call this after structure is created)
+function initializeRotationCenter() {
+    if (typeof buildingBounds !== 'undefined' && buildingBounds.center) {
+        rotationCenter.set(
+            buildingBounds.center.x, 
+            buildingBounds.center.y, 
+            buildingBounds.center.z
+        );
+    } else {
+        // Fallback to origin
+        rotationCenter.set(0, 0, 0);
+    }
+}
 
 function onMouseDown(e) {
     if (e.button === 0) {
@@ -31,14 +45,24 @@ function onMouseDown(e) {
         raycaster.setFromCamera(mouse, camera);
         
         // Check intersection with structure
-        const intersects = raycaster.intersectObjects(structure.children, true);
-        
-        if (intersects.length > 0) {
-            // Set rotation center to the clicked point
-            rotationCenter.copy(intersects[0].point);
-        } else {
-            // If no intersection, use building center
-            rotationCenter.set(buildingCenter.x, buildingCenter.y, buildingCenter.z);
+        if (typeof structure !== 'undefined' && structure.children) {
+            const intersects = raycaster.intersectObjects(structure.children, true);
+            
+            if (intersects.length > 0) {
+                // Set rotation center to the clicked point
+                rotationCenter.copy(intersects[0].point);
+            } else {
+                // If no intersection, use building center or origin
+                if (typeof buildingBounds !== 'undefined' && buildingBounds.center) {
+                    rotationCenter.set(
+                        buildingBounds.center.x, 
+                        buildingBounds.center.y, 
+                        buildingBounds.center.z
+                    );
+                } else {
+                    rotationCenter.set(0, 0, 5);
+                }
+            }
         }
         
         // Store camera distance from rotation center
@@ -89,8 +113,10 @@ function onMouseMove(e) {
         // Make camera look at rotation center
         camera.lookAt(rotationCenter);
         
-        // Update camera target
-        cameraTarget.copy(rotationCenter);
+        // Update camera target if it exists
+        if (typeof cameraTarget !== 'undefined') {
+            cameraTarget.copy(rotationCenter);
+        }
         
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -119,9 +145,15 @@ function onMouseMove(e) {
         const panY = cameraUp.clone().multiplyScalar(deltaY * panSpeed);
         
         camera.position.add(panX).add(panY);
-        cameraTarget.add(panX).add(panY);
+        
+        if (typeof cameraTarget !== 'undefined') {
+            cameraTarget.add(panX).add(panY);
+        }
         rotationCenter.add(panX).add(panY); // Also move rotation center
-        cameraPan.copy(cameraTarget);
+        
+        if (typeof cameraPan !== 'undefined') {
+            cameraPan.copy(cameraTarget);
+        }
         
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -153,8 +185,14 @@ function onWheel(e) {
     
     // Update camera position
     camera.position.copy(rotationCenter).add(offset);
-    cameraTarget.copy(rotationCenter);
-    cameraPan.copy(cameraTarget);
+    
+    if (typeof cameraTarget !== 'undefined') {
+        cameraTarget.copy(rotationCenter);
+    }
+    
+    if (typeof cameraPan !== 'undefined') {
+        cameraPan.copy(cameraTarget);
+    }
 }
 
 function onKeyDown(e) {
@@ -194,25 +232,35 @@ function updateWalkMovement() {
     // Apply movement
     if (keys['w'] || keys['arrowup']) {
         camera.position.addScaledVector(forward, moveSpeed);
-        cameraTarget.addScaledVector(forward, moveSpeed);
+        if (typeof cameraTarget !== 'undefined') {
+            cameraTarget.addScaledVector(forward, moveSpeed);
+        }
         rotationCenter.addScaledVector(forward, moveSpeed);
     }
     if (keys['s'] || keys['arrowdown']) {
         camera.position.addScaledVector(forward, -moveSpeed);
-        cameraTarget.addScaledVector(forward, -moveSpeed);
+        if (typeof cameraTarget !== 'undefined') {
+            cameraTarget.addScaledVector(forward, -moveSpeed);
+        }
         rotationCenter.addScaledVector(forward, -moveSpeed);
     }
 
     if (keys['a'] || keys['arrowleft']) {
         camera.position.addScaledVector(right, -moveSpeed);
-        cameraTarget.addScaledVector(right, -moveSpeed);
+        if (typeof cameraTarget !== 'undefined') {
+            cameraTarget.addScaledVector(right, -moveSpeed);
+        }
         rotationCenter.addScaledVector(right, -moveSpeed);
     }
     if (keys['d'] || keys['arrowright']) {
         camera.position.addScaledVector(right, moveSpeed);
-        cameraTarget.addScaledVector(right, moveSpeed);
+        if (typeof cameraTarget !== 'undefined') {
+            cameraTarget.addScaledVector(right, moveSpeed);
+        }
         rotationCenter.addScaledVector(right, moveSpeed);
     }
 
-    cameraPan.copy(cameraTarget);
+    if (typeof cameraPan !== 'undefined' && typeof cameraTarget !== 'undefined') {
+        cameraPan.copy(cameraTarget);
+    }
 }
