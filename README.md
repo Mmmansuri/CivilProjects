@@ -4,7 +4,7 @@ A professional 3D structural visualization tool built with Three.js for displayi
 
 ## 🚀 Live Demo
 
-**[View Live Demo →](https://yourusername.github.io/structureview)**
+**[View Live Demo →](https://mmmansuri.github.io/CivilProjects/)**
 
 ## 🌟 Features
 
@@ -27,8 +27,6 @@ structureview/
 │   └── styles.css         # All styling
 └── js/
     ├── structureData.js   # Structural data (EDIT THIS FILE)
-    ├── geometry.js        # Cross-section geometry creation
-    ├── elements.js        # Element creation (columns, beams, etc.)
     ├── scene.js          # Three.js scene setup
     ├── interactions.js   # Mouse/keyboard handlers
     └── main.js           # Main initialization & animation
@@ -40,7 +38,7 @@ structureview/
 
 1. **Fork or Clone this repository**
    ```bash
-   git clone https://github.com/yourusername/structureview.git
+   git clone https://github.com/mmmansuri/structureview.git
    cd structureview
    ```
 
@@ -58,13 +56,13 @@ structureview/
    - Save and wait 1-2 minutes
 
 4. **Access your site**
-   - URL: `https://yourusername.github.io/structureview`
+   - URL: `https://mmmansuri.github.io/structureview`
 
 ### Option 2: Local Development
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/structureview.git
+   git clone https://github.com/mmmansuri/structureview.git
    cd structureview
    ```
 
