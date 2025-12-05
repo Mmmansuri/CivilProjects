@@ -4,7 +4,7 @@ A modern, interactive 3D structural model viewer built with Three.js. View and a
 
 ## 🌟 Live Demo
 
-You can see the live viewer at: [Live Demo](https://mmmansuri.github.io/IFC2GLB/)
+You can see the live viewer at: [Live Demo](https://mmmansuri.github.io/StructureView/IFC2GLB/index.html)
 
 ## ✨ Features
 
