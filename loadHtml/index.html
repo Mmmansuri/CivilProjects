@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Structural Optimization Viewer</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Starry background -->
@@ -36,6 +36,11 @@
             <div id="container">
                 <!-- Canvas Controls -->
                 <div class="canvas-bg-toggle">
+                    <input type="file" id="fileInput" accept=".html" style="display: none;">
+                    <button class="reset-view-btn" onclick="document.getElementById('fileInput').click()" style="margin-bottom: 12px;">
+                        Load Model
+                    </button>
+                    
                     <div class="toggle-row">
                         <span class="canvas-bg-label">Dark Mode</span>
                         <label class="toggle-switch">
@@ -169,15 +174,18 @@
         // ============================================
         // FILE LOADING
         // ============================================
-        async function loadModelFromFile() {
-            try {
-                const response = await fetch('model.html');
-                const htmlText = await response.text();
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const htmlText = e.target.result;
                 loadModelFromHTML(htmlText);
-            } catch (error) {
-                console.error('Error loading model.html:', error);
-                alert('Could not load model.html file. Please make sure it exists in the same directory.');
-            }
+            };
+            reader.readAsText(file);
         }
 
         function loadModelFromHTML(htmlText) {
@@ -353,9 +361,6 @@
             window.addEventListener('resize', onWindowResize);
 
             animate();
-            
-            // Auto-load model.html
-            loadModelFromFile();
         }
 
         // ============================================

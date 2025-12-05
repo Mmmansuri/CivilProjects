@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structural Optimization Viewer</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Starry background -->
+    <div class="stars-container" id="starsContainer"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">StructureView</div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#analysis">Analysis</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-wrapper">
+        <!-- Canvas with Layers Inside -->
+        <div class="canvas-wrapper">
+            <div id="container">
+                <!-- Canvas Controls -->
+                <div class="canvas-bg-toggle">
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Dark Mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="canvasBgToggle" onchange="toggleCanvasBackground()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Fullscreen</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="fullscreenToggle" onchange="toggleFullscreen()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Slabs & Walls</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="slabWallToggle" checked onchange="toggleSlabsWalls()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button class="reset-view-btn" onclick="resetView()">Reset View</button>
+                </div>
+
+                <canvas id="canvas"></canvas>
+                
+                <!-- View Controls -->
+                <div id="controls">
+                    <h4>View Controls</h4>
+                    <div class="control-item">
+                        <span class="control-label">Rotate:</span> Left Click + Drag
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">Pan:</span> Right Click + Drag
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">Zoom:</span> Mouse Scroll
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">Navigate:</span> Arrow Keys
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section with Stats -->
+        <div class="about-section">
+            <h3>About This Project</h3>
+            <p>This structural analysis visualization displays a detailed electrical room structural model exported from ETABS. The 3D rendering allows for comprehensive examination of the structural components with real-time interaction capabilities. Engineers can rotate, pan, and zoom to inspect every aspect of the design, facilitating better understanding of spatial relationships and structural integrity.</p>
+            
+            <div class="project-stats">
+                <div class="stat-card">
+                    <div class="stat-label">Source</div>
+                    <div class="stat-value">ETABS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Model Type</div>
+                    <div class="stat-value">ER-mem</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Coordinate System</div>
+                    <div class="stat-value">Z-Up</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Render Mode</div>
+                    <div class="stat-value">Transparent</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#team">Our Team</a></li>
+                    <li><a href="#careers">Careers</a></li>
+                    <li><a href="#press">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#optimization">Structural Optimization</a></li>
+                    <li><a href="#analysis">Analysis Tools</a></li>
+                    <li><a href="#consulting">Consulting</a></li>
+                    <li><a href="#training">Training</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#docs">Documentation</a></li>
+                    <li><a href="#api">API</a></li>
+                    <li><a href="#support">Support</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="mailto:info@structureview.com">info@structureview.com</a></li>
+                    <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
+                    <li>123 Engineering Blvd</li>
+                    <li>San Francisco, CA 94105</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 StructureView. All rights reserved. | <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <!-- Three.js CDN - Must load first -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Load in strict dependency order -->
+    <script src="js/dataLoader.js"></script>
+    <script src="js/support.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
